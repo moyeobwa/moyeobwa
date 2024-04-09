@@ -7,7 +7,7 @@ on:
       - backend/**
 
 jobs:
-  build-and-upload:
+  build-and-test:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -23,7 +23,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Make application.yml
-        working-directory: backend
+        working-directory: ./backend
         run: |
           cd ./src/test
           mkdir resources
@@ -33,11 +33,11 @@ jobs:
         shell: bash
 
       - name: Grant execution permission for gradle
-        working-directory: backend
+        working-directory: ./backend
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        working-directory: backend
+        working-directory: ./backend
         run: ./gradlew clean build
 
       - name: Publish unit test results
