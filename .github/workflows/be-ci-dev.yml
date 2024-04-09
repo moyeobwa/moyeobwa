@@ -23,6 +23,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Make application.yml
+        working-directory: backend
         run: |
           cd ./src/test
           mkdir resources
@@ -32,9 +33,11 @@ jobs:
         shell: bash
 
       - name: Grant execution permission for gradle
+        working-directory: backend
         run: chmod +x gradlew
 
       - name: Build with Gradle
+        working-directory: backend
         run: ./gradlew clean build
 
       - name: Publish unit test results
