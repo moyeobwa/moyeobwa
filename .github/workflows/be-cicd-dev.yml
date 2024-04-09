@@ -50,6 +50,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
           script: |
             docker stop moyeobwa
             docker rm moyeobwa
