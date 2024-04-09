@@ -22,7 +22,9 @@ jobs:
       - name: Make application.yml
         working-directory: ./backend
         run: |
-          cd ./src/main/resources
+          cd ./src/main
+          mkdir resources
+          cd ./resources
           touch ./application.yml
           echo "${{ secrets.YML }}" > ./application.yml
         shell: bash
