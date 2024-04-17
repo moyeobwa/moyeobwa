@@ -1,7 +1,5 @@
 package momo.app.auth.oauth2.userInfo;
 
-import lombok.Getter;
-
 import java.util.Map;
 
 //구글에서 가져올 user 정보

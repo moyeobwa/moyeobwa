@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import momo.app.user.domain.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -111,7 +110,7 @@ public class JwtService {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(
                         user -> user.updateRefreshToken(refreshToken), //회원이 존재하면 refresh 토큰 업데이트
-                        () -> new Exception("일치하는 회원이 없습니다.") //회원이 존재하지 않으면 exception 발생
+                        () -> new IllegalStateException("일치하는 회원이 없습니다.") //회원이 존재하지 않으면 exception 발생
                 );
     }
 

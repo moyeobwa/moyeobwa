@@ -2,12 +2,9 @@ package momo.app.auth.oauth2;
 
 import lombok.Getter;
 import momo.app.user.domain.Role;
-import momo.app.user.dto.request.UserRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
