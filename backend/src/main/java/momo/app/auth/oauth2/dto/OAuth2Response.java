@@ -1,4 +1,4 @@
-package momo.app.dto;
+package momo.app.auth.oauth2.dto;
 
 public interface OAuth2Response {
     String getProvider(); //제공자 (google)

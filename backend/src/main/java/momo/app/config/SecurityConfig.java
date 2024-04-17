@@ -1,91 +1,83 @@
 package momo.app.config;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import momo.app.jwt.JWTFilter;
-import momo.app.jwt.JWTUtil;
-import momo.app.oauth2.CustomSuccessHandler;
-import momo.app.service.CustomOAuth2UserService;
+import momo.app.auth.jwt.JwtAuthenticationEntryPoint;
+import momo.app.auth.jwt.filter.JwtAuthenticationProcessingFilter;
+import momo.app.auth.jwt.JwtAccessDeniedHandler;
+import momo.app.auth.oauth2.handler.LoginFailureHandler;
+import momo.app.auth.oauth2.handler.LoginSuccessHandler;
+import momo.app.auth.oauth2.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+    private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomSuccessHandler customSuccessHandler;
-    private final JWTUtil jwtUtil;
+    private final JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         //csrf disable
         http
-                .csrf((auth) -> auth.disable());
-
-        //From 로그인 방식 disable
-        http
-                .formLogin((auth) -> auth.disable());
-
-        //HTTP Basic 인증 방식 disable
-        http
-                .httpBasic((auth) -> auth.disable());
-
-        //JWTFilter 추가
-        http
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-        //oauth2
-        http
+                .csrf((auth) -> auth.disable()) //csrf 보안 사용 disable
+                .formLogin((auth) -> auth.disable()) //From 로그인 방식 disable
+                .httpBasic((auth) -> auth.disable()) //HTTP Basic 인증 방식 disable
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/", "/sign-up").permitAll() //해당 경로 접근 가능
+                        .anyRequest().authenticated())
+//                .exceptionHandling(exceptionHandlingConfigurer -> {
+//                    exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+//                    exceptionHandlingConfigurer.accessDeniedHandler(jwtAccessDeniedHandler);
+//                })
+//                .headers(httpSecurityHeadersConfigurer ->
+//                        httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+//                )
+//                .sessionManagement(SessionManagementConfigurer ->
+//                        SessionManagementConfigurer.sessionCreationPolicy(
+//                                SessionCreationPolicy.STATELESS
+//                        )
+//                )
+                .addFilterAfter(jwtAuthenticationProcessingFilter, LogoutFilter.class)
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
-                        .successHandler(customSuccessHandler)
+//                        .redirectionEndpoint(redirectionEndpointConfig ->
+//                                redirectionEndpointConfig.baseUri("/api/oauth2/callback/*"))
+                        .successHandler(loginSuccessHandler)
+                        .failureHandler(loginFailureHandler)
                 );
 
-        //경로별 인가 작업
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated());
-
-        //세션 설정 : STATELESS
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        http
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                        CorsConfiguration configuration = new CorsConfiguration();
-
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                        return configuration;
-                    }
-                }));
-
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","PATCH","OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

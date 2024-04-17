@@ -1,4 +1,4 @@
-package momo.app.dto;
+package momo.app.auth.oauth2.dto;
 
 import java.util.Map;
 

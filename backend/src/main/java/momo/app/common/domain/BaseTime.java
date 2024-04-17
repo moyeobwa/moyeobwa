@@ -1,4 +1,4 @@
-package momo.app.domain;
+package momo.app.common.domain;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

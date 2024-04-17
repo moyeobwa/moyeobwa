@@ -1,4 +1,4 @@
-package momo.app.constant;
+package momo.app.user.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
