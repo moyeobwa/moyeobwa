@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -35,33 +35,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        //csrf disable
         http
-                .csrf((auth) -> auth.disable()) //csrf 보안 사용 disable
-                .formLogin((auth) -> auth.disable()) //From 로그인 방식 disable
-                .httpBasic((auth) -> auth.disable()) //HTTP Basic 인증 방식 disable
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/sign-up").permitAll() //해당 경로 접근 가능
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("api/v1/sign-up").hasRole("GUEST")
                         .anyRequest().authenticated())
-//                .exceptionHandling(exceptionHandlingConfigurer -> {
-//                    exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint);
-//                    exceptionHandlingConfigurer.accessDeniedHandler(jwtAccessDeniedHandler);
-//                })
-//                .headers(httpSecurityHeadersConfigurer ->
-//                        httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-//                )
-//                .sessionManagement(SessionManagementConfigurer ->
-//                        SessionManagementConfigurer.sessionCreationPolicy(
-//                                SessionCreationPolicy.STATELESS
-//                        )
-//                )
+                .exceptionHandling(exceptionHandlingConfigurer -> {
+                    exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                    exceptionHandlingConfigurer.accessDeniedHandler(jwtAccessDeniedHandler);
+                })
+                .sessionManagement(SessionManagementConfigurer ->
+                        SessionManagementConfigurer.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS)
+                )
                 .addFilterAfter(jwtAuthenticationProcessingFilter, LogoutFilter.class)
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
-//                        .redirectionEndpoint(redirectionEndpointConfig ->
-//                                redirectionEndpointConfig.baseUri("/api/oauth2/callback/*"))
                         .successHandler(loginSuccessHandler)
                         .failureHandler(loginFailureHandler)
                 );
