@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import momo.app.auth.dto.AuthUser;
 import momo.app.auth.jwt.service.JwtService;
 import momo.app.auth.jwt.util.PasswordUtil;
 import momo.app.user.domain.User;
@@ -93,20 +94,17 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     //Security를 사용하여 사용자를 인증 및 허가
     private void saveAuthentication(User user) {
-        String password = PasswordUtil.generateRandomPassword(); // password는 소셜로그인은 필요없으므로 랜덤 생성
-
-        //Spring Security의 User 객체 생성
+        AuthUser authUser = AuthUser.createAuthUser(user);
+        /*
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(password)
                 .roles(user.getRole().name())
                 .build();
-
+        */
         //UserDetails 객체를 사용하여 사용자의 인증 정보를 나타내는 토큰 생성
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null,
-                        authoritiesMapper.mapAuthorities(userDetails.getAuthorities()));
-
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                authUser, null, authoritiesMapper.mapAuthorities(authUser.getAuthorities()));
         SecurityContextHolder.getContext().setAuthentication(authentication); //SecurityContextHolder에 생성된 인증 객체를 설정하여 사용자의 인증 정보를 저장
     }
 }
