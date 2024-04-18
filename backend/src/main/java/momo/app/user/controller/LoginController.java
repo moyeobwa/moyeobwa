@@ -4,7 +4,7 @@ package momo.app.user.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
-import momo.app.service.UserService;
+import momo.app.user.service.UserService;
 import momo.app.user.dto.request.UserSignupJsonRequest;
 import momo.app.user.dto.request.UserSignupRequest;
 import org.springframework.http.MediaType;
@@ -35,9 +35,6 @@ public class LoginController {
         UserSignupRequest userSignupRequest = UserSignupRequest.of(request, image);
         userService.signUp(userSignupRequest, response, authUser);
 
-        /*
-        리소스 생성이 아니니 204보다는 200이 좀 더 맞는 거 같아요!
-         */
         return ResponseEntity.ok()
                 .build();
     }

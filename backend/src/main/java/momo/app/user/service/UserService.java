@@ -1,10 +1,11 @@
-package momo.app.service;
+package momo.app.user.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import momo.app.auth.dto.AuthUser;
-import momo.app.auth.jwt.service.JwtService;
+import momo.app.auth.jwt.service.JwtCreateAndUpdateService;
+import momo.app.auth.jwt.service.JwtSendService;
 import momo.app.image.S3Service;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
@@ -20,25 +21,19 @@ import java.util.NoSuchElementException;
 public class UserService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
-    private final JwtService jwtService;
+    private final JwtCreateAndUpdateService jwtCreateAndUpdateService;
+    private final JwtSendService jwtSendService;
 
     @Transactional
     public void signUp(
             UserSignupRequest userSignupRequest,
             HttpServletResponse response,
             AuthUser authUser) {
-        /*
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetail = (UserDetails) authentication.getPrincipal();
-        String email = userDetail.getUsername();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
-        */
 
         User user = findUser(authUser);
-        String accessToken = jwtService.createAccessToken(user.getEmail());
-        String refreshToken = jwtService.createRefreshToken();
-        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        String accessToken = jwtCreateAndUpdateService.createAccessToken(user.getEmail());
+        String refreshToken = jwtCreateAndUpdateService.createRefreshToken();
+        jwtSendService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         user.authorizeUser();
         user.updateRefreshToken(refreshToken);
         String imageUrl = s3Service.upload(userSignupRequest.image());

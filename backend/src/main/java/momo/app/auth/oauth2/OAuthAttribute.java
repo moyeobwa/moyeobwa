@@ -33,7 +33,6 @@ public class OAuthAttribute {
                 .socialId(userInfo.getId())
                 .email(UUID.randomUUID() + "@socialUser.com")
                 .name(userInfo.getName())
-                .imageUrl(userInfo.getImageUrl())
                 .role(Role.GUEST)
                 .build();
     }
