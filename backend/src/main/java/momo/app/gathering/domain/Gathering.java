@@ -29,7 +29,7 @@ public class Gathering extends BaseTime {
     private Long id;
 
     @Embedded
-    GatheringInfo gatheringInfo;
+    private GatheringInfo gatheringInfo;
 
     private Long managerId;
 
