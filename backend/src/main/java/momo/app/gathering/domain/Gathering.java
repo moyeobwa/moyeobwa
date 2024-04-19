@@ -31,6 +31,7 @@ public class Gathering extends BaseTime {
     @Embedded
     private GatheringInfo gatheringInfo;
 
+    @Column(nullable = false)
     private Long managerId;
 
     @Column(nullable = false)

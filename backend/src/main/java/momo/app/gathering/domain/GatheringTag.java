@@ -11,12 +11,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import momo.app.common.domain.BaseTime;
 import momo.app.tag.domain.Tag;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GatheringTag {
+public class GatheringTag extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
