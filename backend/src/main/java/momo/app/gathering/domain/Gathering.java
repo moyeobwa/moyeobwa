@@ -23,13 +23,7 @@ public class Gathering extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Category category;
-
-    private String name;
-
-    private String description;
-
-    private String imageUrl;
+    GatheringInfo gatheringInfo;
 
     private Long managerId;
 
@@ -37,17 +31,8 @@ public class Gathering extends BaseTime {
     private List<GatheringTag> gatheringTags = new ArrayList<>();
 
     @Builder
-    public Gathering(
-            Category category,
-            String name,
-            String description,
-            String imageUrl,
-            Long managerId
-    ) {
-        this.name = name;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.category = category;
+    public Gathering(GatheringInfo gatheringInfo, Long managerId) {
+        this.gatheringInfo = gatheringInfo;
         this.managerId = managerId;
     }
 
@@ -61,4 +46,7 @@ public class Gathering extends BaseTime {
         }
     }
 
+    public void updateGatheringInfo(GatheringInfo gatheringInfo) {
+        this.gatheringInfo = gatheringInfo;
+    }
 }
