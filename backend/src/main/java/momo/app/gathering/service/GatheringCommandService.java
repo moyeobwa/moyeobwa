@@ -1,5 +1,6 @@
 package momo.app.gathering.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
@@ -82,6 +83,28 @@ public class GatheringCommandService {
         gathering.validateManager(authUser);
         s3Service.deleteFile(gathering.getGatheringInfo().getImageUrl());
         String uploadedImage = s3Service.upload(request.image());
+        gatheringTagRepository.deleteAllByGathering(gathering);
+
+        for (String tagName : request.tagNames()) {
+            Tag tag = tagRepository.findByName(tagName).orElse(null);
+            if (tag == null) {
+                tag = Tag.builder()
+                        .name(tagName)
+                        .build();
+
+                tagRepository.save(tag);
+            }
+
+            GatheringTag gatheringTag = GatheringTag.builder()
+                    .tag(tag)
+                    .gathering(gathering)
+                    .build();
+
+            gatheringTagRepository.save(gatheringTag);
+            tag.addGatheringTag(gatheringTag);
+        }
+
+        gathering = findGathering(id);
         GatheringInfo gatheringInfo = GatheringInfo.of(
                 request.category(),
                 request.name(),
@@ -100,6 +123,5 @@ public class GatheringCommandService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
     }
-
 
 }
