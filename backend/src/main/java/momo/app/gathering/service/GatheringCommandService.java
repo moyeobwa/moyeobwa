@@ -4,11 +4,13 @@ import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
 import momo.app.gathering.domain.Gathering;
+import momo.app.gathering.domain.GatheringInfo;
 import momo.app.gathering.domain.GatheringMember;
 import momo.app.gathering.domain.GatheringMemberRepository;
 import momo.app.gathering.domain.GatheringRepository;
 import momo.app.gathering.domain.GatheringTag;
 import momo.app.gathering.domain.GatheringTagRepository;
+import momo.app.gathering.dto.GatheringUpdateRequest;
 import momo.app.tag.domain.Tag;
 import momo.app.tag.domain.TagRepository;
 import momo.app.gathering.dto.GatheringCreateRequest;
@@ -33,11 +35,15 @@ public class GatheringCommandService {
     public Long createGathering(GatheringCreateRequest request, AuthUser authUser) {
         User user = findUser(authUser.getId());
         String uploadedImageUrl = s3Service.upload(request.image());
+        GatheringInfo gatheringInfo = GatheringInfo.of(
+                request.category(),
+                request.name(),
+                request.description(),
+                uploadedImageUrl
+        );
         Gathering gathering = Gathering.builder()
-                .category(request.category())
-                .description(request.description())
-                .imageUrl(uploadedImageUrl)
-                .name(request.name())
+                .gatheringInfo(gatheringInfo)
+                .managerId(user.getId())
                 .build();
 
         gatheringRepository.save(gathering);
@@ -70,8 +76,30 @@ public class GatheringCommandService {
         return gathering.getId();
     }
 
+    @Transactional
+    public void update(Long id, GatheringUpdateRequest request, AuthUser authUser) {
+        Gathering gathering = findGathering(id);
+        gathering.validateManager(authUser);
+        s3Service.deleteFile(gathering.getGatheringInfo().getImageUrl());
+        String uploadedImage = s3Service.upload(request.image());
+        GatheringInfo gatheringInfo = GatheringInfo.of(
+                request.category(),
+                request.name(),
+                request.description(),
+                uploadedImage
+        );
+        gathering.updateGatheringInfo(gatheringInfo);
+    }
+
+    private Gathering findGathering(Long id) {
+        return gatheringRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("gathering not found"));
+    }
+
     private User findUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
     }
+
+
 }
