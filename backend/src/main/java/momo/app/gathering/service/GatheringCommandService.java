@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GatheringCommandService {
 
     private final GatheringRepository gatheringRepository;
@@ -32,7 +33,6 @@ public class GatheringCommandService {
     private final TagRepository tagRepository;
     private final GatheringTagRepository gatheringTagRepository;
 
-    @Transactional
     public Long createGathering(GatheringCreateRequest request, AuthUser authUser) {
         User user = findUser(authUser.getId());
         String uploadedImageUrl = s3Service.upload(request.image());
@@ -77,7 +77,6 @@ public class GatheringCommandService {
         return gathering.getId();
     }
 
-    @Transactional
     public void update(Long id, GatheringUpdateRequest request, AuthUser authUser) {
         Gathering gathering = findGathering(id);
         gathering.validateManager(authUser);
@@ -114,6 +113,15 @@ public class GatheringCommandService {
         gathering.updateGatheringInfo(gatheringInfo);
     }
 
+    public void delete(Long id, AuthUser authUser) {
+        Gathering gathering = findGathering(id);
+        gathering.validateManager(authUser);
+
+        gatheringTagRepository.deleteAllByGathering(gathering);
+        gatheringMemberRepository.deleteAllByGathering(gathering);
+        gatheringRepository.deleteById(id);
+    }
+
     private Gathering findGathering(Long id) {
         return gatheringRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("gathering not found"));
@@ -123,5 +131,4 @@ public class GatheringCommandService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
     }
-
 }
