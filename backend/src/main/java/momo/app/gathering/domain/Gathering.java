@@ -1,5 +1,6 @@
 package momo.app.gathering.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,10 +14,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import momo.app.auth.dto.AuthUser;
 import momo.app.common.domain.BaseTime;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("is_deleted = false")
 public class Gathering extends BaseTime {
 
     @Id
@@ -26,6 +30,10 @@ public class Gathering extends BaseTime {
     GatheringInfo gatheringInfo;
 
     private Long managerId;
+
+    @Column(nullable = false)
+    @ColumnDefault(value = "false")
+    private boolean isDeleted;
 
     @OneToMany(mappedBy = "gathering")
     private List<GatheringTag> gatheringTags = new ArrayList<>();
@@ -49,4 +57,5 @@ public class Gathering extends BaseTime {
     public void updateGatheringInfo(GatheringInfo gatheringInfo) {
         this.gatheringInfo = gatheringInfo;
     }
+
 }
