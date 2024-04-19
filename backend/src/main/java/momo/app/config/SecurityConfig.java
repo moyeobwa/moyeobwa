@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/**", "swagger-ui/**").permitAll()
                         .requestMatchers("api/v1/sign-up").hasRole("GUEST")
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandlingConfigurer -> {
