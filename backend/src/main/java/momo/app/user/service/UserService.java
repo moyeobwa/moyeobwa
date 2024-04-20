@@ -49,7 +49,7 @@ public class UserService {
 
     public void logout(String accessToken, AuthUser authUser) {
         User user = findUser(authUser);
-        Long expiration = jwtCreateAndUpdateService.getExpiration(accessToken);
+        Long expiration = jwtCreateAndUpdateService.getRemainingExpirationTime(accessToken);
 
         if (expiration > 0) {
             redisUtil.setBlackList(accessToken, "accessToken", expiration);
