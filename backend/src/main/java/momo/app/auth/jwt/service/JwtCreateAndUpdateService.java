@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import momo.app.common.util.RedisUtil;
 import momo.app.user.domain.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class JwtCreateAndUpdateService {
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String EMAIL_CLAIM = "email";
     private final UserRepository userRepository;
+    private final RedisUtil redisUtil;
 
     //access 토큰 생성
     public String createAccessToken(String email) {
@@ -63,10 +65,20 @@ public class JwtCreateAndUpdateService {
                 );
     }
 
+    public Long getExpiration(String accessToken) {
+        Long expiration = JWT.decode(accessToken).getExpiresAt().getTime();
+        Long now = new Date().getTime();
+
+        return (expiration - now);
+    }
+
     //토큰 유효성 검사
     public boolean isTokenValid(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+            if (redisUtil.hasKeyBlackList(token)) {
+                throw new RuntimeException("토그아웃 상태의 토큰입니다.");
+            }
             return true;
         } catch (Exception e) {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
