@@ -49,5 +49,8 @@ public class User extends BaseTime {
         this.imageUrl = imageUrl;
     }
 
+    public void logout() {
+        this.refreshToken = null;
+    }
 }
 
