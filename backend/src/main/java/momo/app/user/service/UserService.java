@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import momo.app.auth.dto.AuthUser;
 import momo.app.auth.jwt.service.JwtCreateAndUpdateService;
 import momo.app.auth.jwt.service.JwtSendService;
+import momo.app.common.util.RedisUtil;
 import momo.app.image.S3Service;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
@@ -23,6 +24,7 @@ public class UserService {
     private final S3Service s3Service;
     private final JwtCreateAndUpdateService jwtCreateAndUpdateService;
     private final JwtSendService jwtSendService;
+    private final RedisUtil redisUtil;
 
     @Transactional
     public void signUp(
@@ -43,5 +45,16 @@ public class UserService {
     private User findUser(AuthUser authUser) {
         return userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    }
+
+    public void logout(String accessToken, AuthUser authUser) {
+        User user = findUser(authUser);
+        Long expiration = jwtCreateAndUpdateService.getExpiration(accessToken);
+
+        if (expiration > 0) {
+            redisUtil.setBlackList(accessToken, "accessToken", expiration);
+        }
+
+        user.logout();
     }
 }
