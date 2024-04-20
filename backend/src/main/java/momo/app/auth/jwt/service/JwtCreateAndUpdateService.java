@@ -2,8 +2,6 @@ package momo.app.auth.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,7 +62,7 @@ public class JwtCreateAndUpdateService {
                 );
     }
 
-    public Long getExpiration(String accessToken) {
+    public Long getRemainingExpirationTime(String accessToken) {
         Long expiration = JWT.decode(accessToken).getExpiresAt().getTime();
         Long now = new Date().getTime();
 
