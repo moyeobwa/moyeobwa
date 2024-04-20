@@ -91,7 +91,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 
     // access 토큰 유효성 검사 및 인증 처리
-    private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)  throws ServletException, IOException{
+    private void checkAccessTokenAndAuthentication(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    )  throws ServletException, IOException{
         jwtExtractService.extractAccessToken(request) //사용자 요청 header에서 access 토큰 추출
                 .filter(jwtCreateAndUpdateService::isTokenValid) // 토큰 유효성 검사
                 .ifPresent(accessToken -> jwtExtractService.extractEmail(accessToken) // 유효한 토큰이 있으면 이메일 추출
