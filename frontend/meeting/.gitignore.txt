@@ -1,1 +1,1 @@
-/node_modules
+frontend/meeting/node_modules/
