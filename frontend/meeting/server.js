@@ -1,14 +1,19 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
+
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.set("port", process.env.PORT || 3000);
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// express에서 정적 파일 제공 설정
+app.use(express.static(path.join(__dirname, "build")));
+
+// 루트 요청을 처리하고, React 애플리케이션의 빌드된 index.html 파일을 제공
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
-const PORT = process.env.PORT || 80; 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+// 서버 실행
+app.listen(app.get("port"), () => {
+  console.log(`${app.get("port")}번 포트에서 대기중..`);
 });
