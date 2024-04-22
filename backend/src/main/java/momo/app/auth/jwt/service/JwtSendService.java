@@ -2,6 +2,7 @@ package momo.app.auth.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -37,7 +38,16 @@ public class JwtSendService {
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK); // 성공 상태
         response.setHeader(accessHeader, accessToken); // Http 헤더에 accessHeader를 키로 access 토큰 저장
-        response.setHeader(refreshHeader, refreshToken); //Http 헤더에 refreshHeader를 키로 refresh 토큰 저장
+        response.addCookie(createCookie(refreshHeader, refreshToken));
         log.info("Access Token : {}, Refresh Token : {}", accessToken, refreshToken);
+    }
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(60*60*24);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
     }
 }
