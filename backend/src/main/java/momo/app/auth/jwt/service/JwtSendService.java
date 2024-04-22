@@ -44,7 +44,7 @@ public class JwtSendService {
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*24);
+        cookie.setMaxAge(14*24*60*60);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 
