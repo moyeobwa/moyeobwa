@@ -41,7 +41,7 @@ public class LoginController {
                 .build();
     }
 
-    @DeleteMapping("/logout")
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(
             @AuthenticationPrincipal AuthUser authUser,
             HttpServletRequest request
