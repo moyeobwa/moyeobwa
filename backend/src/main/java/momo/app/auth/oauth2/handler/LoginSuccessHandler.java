@@ -28,7 +28,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication)
-            throws IOException, ServletException {
+            throws IOException {
         log.info("OAuth2 Login 성공");
 
         try {
@@ -40,7 +40,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             //첫 로그인인 경우 (role이 GUEST인 경우) 회원가입 실행
             if (user.getRole() == Role.GUEST) {
                 //클라이언트 페이지로 Redirect
-                response.sendRedirect("http://ec2-13-125-224-63.ap-northeast-2.compute.amazonaws.com/"); //추후 변경
+                response.sendRedirect("http://ec2-13-125-224-63.ap-northeast-2.compute.amazonaws.com/token-refresh"); //추후 변경
 
                 //회원가입 후 role을 User로 변경
             } else {
