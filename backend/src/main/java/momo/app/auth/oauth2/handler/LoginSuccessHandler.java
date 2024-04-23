@@ -43,9 +43,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             String accessToken = jwtCreateAndUpdateService.createAccessToken(user.getEmail()); // access 토큰 생성
             String refreshToken = jwtCreateAndUpdateService.createRefreshToken();
             jwtSendService.sendAccessAndRefreshToken(response, "Bearer " + accessToken, refreshToken);
-            userRepository.findByEmail(user.getEmail())
-                    .orElseThrow(()-> new NoSuchElementException("user가 존재하지 않습니다."))
-                    .updateRefreshToken(refreshToken);
+            jwtCreateAndUpdateService.updateRefreshToken(user.getEmail(), refreshToken);
 
 
             //첫 로그인인 경우 (role이 GUEST인 경우) 회원가입 실행
