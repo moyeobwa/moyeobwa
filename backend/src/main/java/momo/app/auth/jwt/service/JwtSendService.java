@@ -39,6 +39,7 @@ public class JwtSendService {
         response.setStatus(HttpServletResponse.SC_OK); // 성공 상태
         response.setHeader(accessHeader, accessToken); // Http 헤더에 accessHeader를 키로 access 토큰 저장
         response.addCookie(createCookie(refreshHeader, refreshToken));
+        response.addHeader("Set-Cookie", "name=value; path=/; MaxAge=-1; SameSite=None");
         log.info("Access Token : {}, Refresh Token : {}", accessToken, refreshToken);
     }
 
@@ -47,6 +48,7 @@ public class JwtSendService {
         cookie.setMaxAge(14*24*60*60);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
 
         return cookie;
     }
