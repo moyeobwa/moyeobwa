@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
 import momo.app.auth.jwt.service.JwtExtractService;
+import momo.app.user.domain.User;
 import momo.app.user.service.UserService;
 import momo.app.user.dto.request.UserSignupJsonRequest;
 import momo.app.user.dto.request.UserSignupRequest;
@@ -41,8 +42,19 @@ public class LoginController {
                 .build();
     }
 
-    @DeleteMapping("/logout")
-    public ResponseEntity<String> logout(
+    @GetMapping("/reIssue-access-token")
+    public ResponseEntity<Void> reIssueAccessToken(
+            @AuthenticationPrincipal AuthUser authUser,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        userService.reIssueAccessToken(request, response);
+        return ResponseEntity.ok().build();
+
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
             @AuthenticationPrincipal AuthUser authUser,
             HttpServletRequest request
     ) {
