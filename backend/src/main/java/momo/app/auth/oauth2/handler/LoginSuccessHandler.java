@@ -9,11 +9,16 @@ import momo.app.auth.jwt.service.JwtCreateAndUpdateService;
 import momo.app.auth.jwt.service.JwtSendService;
 import momo.app.auth.oauth2.CustomOAuth2User;
 import momo.app.user.domain.Role;
+import momo.app.user.domain.User;
+import momo.app.user.domain.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 //로그인 성공 시 실행되는 핸들러
 @RequiredArgsConstructor
@@ -22,8 +27,10 @@ import java.io.IOException;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtCreateAndUpdateService jwtCreateAndUpdateService;
     private final JwtSendService jwtSendService;
+    private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public void onAuthenticationSuccess(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -36,11 +43,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             String accessToken = jwtCreateAndUpdateService.createAccessToken(user.getEmail()); // access 토큰 생성
             String refreshToken = jwtCreateAndUpdateService.createRefreshToken();
             jwtSendService.sendAccessAndRefreshToken(response, "Bearer " + accessToken, refreshToken);
+            jwtCreateAndUpdateService.updateRefreshToken(user.getEmail(), refreshToken);
+
 
             //첫 로그인인 경우 (role이 GUEST인 경우) 회원가입 실행
             if (user.getRole() == Role.GUEST) {
                 //클라이언트 페이지로 Redirect
-                response.sendRedirect("http://ec2-13-125-224-63.ap-northeast-2.compute.amazonaws.com/token-refresh"); //추후 변경
+                response.sendRedirect("http://ec2-13-125-224-63.ap-northeast-2.compute.amazonaws.com/token-refresh");
 
                 //회원가입 후 role을 User로 변경
             } else {
