@@ -60,27 +60,4 @@ public class UserService {
 
         user.logout();
     }
-
-    public void reIssueAccessToken(
-            HttpServletRequest request,
-            HttpServletResponse response) {
-        jwtExtractService.extractRefreshToken(request)
-                .flatMap(refreshToken -> userRepository.findByRefreshToken(refreshToken))
-                .ifPresent(user -> {
-                    String reIssueRefreshToken = reIssueRefreshToken(user);
-                    jwtSendService.sendAccessAndRefreshToken(response, jwtCreateAndUpdateService.createAccessToken(user.getEmail()), reIssueRefreshToken);
-                });
-    }
-
-
-    private String reIssueRefreshToken(User user) {
-        String reIssuedRefreshToken = jwtCreateAndUpdateService.createRefreshToken();
-        updateUserRefreshToken(user, reIssuedRefreshToken);
-        return reIssuedRefreshToken;
-    }
-
-    private void updateUserRefreshToken(User user, String reIssuedRefreshToken) {
-        user.updateRefreshToken(reIssuedRefreshToken);
-        userRepository.saveAndFlush(user);
-    }
 }

@@ -42,17 +42,6 @@ public class LoginController {
                 .build();
     }
 
-    @GetMapping("/reIssue-access-token")
-    public ResponseEntity<Void> reIssueAccessToken(
-            @AuthenticationPrincipal AuthUser authUser,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        userService.reIssueAccessToken(request, response);
-        return ResponseEntity.ok().build();
-
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @AuthenticationPrincipal AuthUser authUser,
