@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import momo.app.user.domain.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -38,17 +39,18 @@ public class JwtSendService {
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK); // 성공 상태
         response.setHeader(accessHeader, accessToken); // Http 헤더에 accessHeader를 키로 access 토큰 저장
-        response.addCookie(createCookie(refreshHeader, refreshToken));
-        response.addHeader("Set-Cookie", "name=value; path=/; MaxAge=-1; SameSite=None");
+        response.addHeader("Set-Cookie", createCookie(refreshHeader, refreshToken).toString());
         log.info("Access Token : {}, Refresh Token : {}", accessToken, refreshToken);
     }
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(14*24*60*60);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+    private ResponseCookie createCookie(String key, String value) {
+        ResponseCookie cookie = ResponseCookie.from(key, value)
+                .maxAge(14*24*60*60)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .build();
 
         return cookie;
     }
