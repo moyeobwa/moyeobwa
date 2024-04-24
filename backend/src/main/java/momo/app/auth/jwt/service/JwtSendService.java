@@ -50,7 +50,7 @@ public class JwtSendService {
                 .sameSite("None")
                 .secure(true)
                 .path("/")
-                .build();
+                .build(); 
 
         return cookie;
     }
