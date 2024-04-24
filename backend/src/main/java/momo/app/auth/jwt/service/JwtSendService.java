@@ -43,6 +43,7 @@ public class JwtSendService {
         log.info("Access Token : {}, Refresh Token : {}", accessToken, refreshToken);
     }
 
+    private Cookie createCookie(String key, String value) {
     private ResponseCookie createCookie(String key, String value) {
         ResponseCookie cookie = ResponseCookie.from(key, value)
                 .maxAge(14*24*60*60)
