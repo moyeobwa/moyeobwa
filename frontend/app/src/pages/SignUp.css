@@ -1,0 +1,48 @@
+.SignUp {
+    display: flex;
+    
+    max-width: 800px;
+    width: 100%;
+    height: 80vh;
+    box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 20px 0px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+h1 {
+    font-weight:bolder;
+    font-size:30px;
+}
+
+.SignUp .input_section, .intro_section {
+    flex:1;
+    text-align: center;
+    padding: 0 50px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.SignUp .input_section {
+    display: flex;
+    
+}
+.SignUp .intro_section {
+    display: flex;
+    height: 100%;
+    background-color: rgb(246, 113, 120);
+    color : white;
+    border-radius: 0px 20px 20px 0px;
+}
+
+
+input {
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+  }
