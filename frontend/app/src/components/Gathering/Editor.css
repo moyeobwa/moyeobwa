@@ -1,0 +1,68 @@
+.Editor {
+  padding: 20px;
+}
+
+.section_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.section_wrapper > section {
+  width: calc(50% - 10px); 
+}
+
+.section_wrapper > section:nth-child(odd) {
+  margin-right: 20px;
+}
+
+h4 {
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.section_wrapper > section > .input_wrapper {
+  position: relative;
+}
+
+.section_wrapper > section > .input_wrapper input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+  font-size: 16px;
+}
+
+.section_wrapper > section > .input_wrapper textarea {
+  width: calc(100% - 20px); 
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+  font-size: 16px;
+}
+
+.Editor textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  font-size: 16px;
+}
+
+.section_wrapper > section > .input_wrapper input:focus,
+.section_wrapper > section > .input_wrapper textarea:focus {
+  border-color: rgb(246, 113, 120);
+}
+
+.button_section {
+  margin-top: 20px; 
+  display: flex;
+  justify-content: space-between;
+}
+
+.button_section button:hover {
+  background-color: #f0f0f0;
+}

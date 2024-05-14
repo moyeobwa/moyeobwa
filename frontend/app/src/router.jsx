@@ -5,6 +5,8 @@ const Loading = <div>Loading....</div>
 const Home = lazy(() => import("./pages/Home"));
 const SignUp = lazy(() => import("./pages/SignUp"));
 const Login = lazy(() => import("./pages/Login"));
+const Gathering = lazy(() => import("./pages/Gathering"));
+const NewGathering = lazy(() => import("./pages/NewGathering"));
 
 const router = createBrowserRouter([
     {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
     {
         path: "/login",
         element: <Suspense fallback={Loading}><Login /></Suspense>
+    },
+    {
+        path: "/gathering",
+        element: <Suspense fallback={Loading}><Gathering /></Suspense>
+    },
+    {
+        path: "/gathering/new",
+        element: <Suspense fallback={Loading}><NewGathering /></Suspense>
     }
 ]);
 
