@@ -1,11 +1,13 @@
 import { RouterProvider } from 'react-router-dom'
-import { useState } from 'react'
 import router from './router'
 import './App.css'
+import { GroupProvider } from './context/GroupContext'
 
 function App() {
   return (
-    <RouterProvider router={router}></RouterProvider>
+    <GroupProvider>
+      <RouterProvider router={router}></RouterProvider>
+    </GroupProvider>
   )
 }
 

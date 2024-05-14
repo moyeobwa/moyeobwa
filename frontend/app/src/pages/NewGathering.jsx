@@ -1,6 +1,15 @@
+import Editor from "../components/Gathering/Editor";
+import { useGroupContext } from "../context/GroupContext";
+import Header from "../components/Header";
 const NewGathering = () => {
+
+    const { addGroup } = useGroupContext();
+
     return (
-         <div>NewGathering</div>
+         <div className="addGroup">
+            <Header />
+            <Editor />
+         </div>
     );
 }
 
