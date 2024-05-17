@@ -1,0 +1,44 @@
+.gathering {
+  display: flex;
+  flex-direction: column;
+  height: 600px; /* 높이 조정 */
+  background: linear-gradient(to right, #FFB6C1, #FFFFFF);
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 20px 0px;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  border-radius: 0 0 20px 20px; /* 하단 둥글게 */
+  overflow: hidden; /* 자식 요소의 둥근 모서리 처리를 위해 */
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  border-radius: 0 0 0 20px; /* 하단 왼쪽 둥글게 */
+}
+
+.chat-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 0 0 20px 0; /* 하단 오른쪽 둥글게 */
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.chat-input {
+  display: flex;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
