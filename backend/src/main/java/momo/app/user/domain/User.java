@@ -3,6 +3,10 @@ package momo.app.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import momo.app.common.domain.BaseTime;
+import momo.app.friend.domain.Friend;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,6 +22,7 @@ public class User extends BaseTime {
 
     private String name;
 
+    @Column(unique = true, length = 20)
     private String nickname;
 
     private String email;
@@ -35,6 +40,13 @@ public class User extends BaseTime {
     private String description;
 
     private String interest;
+
+    @OneToMany(mappedBy = "user")
+    private List<Friend> friendList = new ArrayList<>();
+
+    public void addFriend(Friend friend) {
+        friendList.add(friend);
+    }
 
     public void authorizeUser() {
         this.role = Role.USER;
