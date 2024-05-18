@@ -23,9 +23,11 @@ public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
 
-    public void request(Long id, AuthUser authUser) {
+    public void request(String nickName, AuthUser authUser) {
         User fromUser = findUser(authUser.getId());
-        User toUser = findUser(id);
+        User toUser = findUserByNickName(nickName);
+
+        validateFriendRequest(fromUser, toUser);
 
         Friend fromFriend = Friend.builder()
                 .user(fromUser)
@@ -36,8 +38,8 @@ public class FriendService {
         fromUser.addFriend(fromFriend);
     }
 
-    public void accept(Long id, AuthUser authUser) {
-        Friend fromFriend = findFriend(id);
+    public void accept(String nickName, AuthUser authUser) {
+        Friend fromFriend = findFriendByNickName(nickName);
         User toUser = findUser(authUser.getId());
         User fromUser = fromFriend.getUser();
 
@@ -65,7 +67,7 @@ public class FriendService {
     public List<FriendResponse> getRequest(AuthUser authUser) {
         User user = findUser(authUser.getId());
 
-        List<Friend> requestFriends = friendRepository.findByFriendAndState(user);
+        List<Friend> requestFriends = friendRepository.findByFriendAndState(user, State.WAITING);
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
@@ -78,8 +80,34 @@ public class FriendService {
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
     }
 
-    private Friend findFriend(Long id) {
-        return friendRepository.findById(id)
+    private User findUserByNickName(String nickName) {
+        return userRepository.findByNickname(nickName)
+                .orElseThrow(() -> new NoSuchElementException("user not found"));
+    }
+
+    private Friend findFriendByNickName(String nickName) {
+        User user = findUserByNickName(nickName);
+
+        return friendRepository.findByUser(user)
                 .orElseThrow(() -> new NoSuchElementException("friend not found"));
+    }
+
+    private void validateFriendRequest(User fromUser, User toUser) {
+        if(friendRepository.findByUserAndFriendAndState(fromUser, toUser, State.WAITING)
+                .isPresent()) {
+            throw new RuntimeException("이미 요청한 친구신청입니다.");
+        }
+        if(friendRepository.findByUserAndFriendAndState(toUser, fromUser, State.WAITING)
+                .isPresent()) {
+            throw new RuntimeException("이미 요청받은 친구신청입니다.");
+        }
+        if(friendRepository.findByUserAndFriendAndState(fromUser, toUser, State.ACCEPT)
+                .isPresent()) {
+            throw new RuntimeException("이미 친구입니다.");
+        }
+        if(friendRepository.findByUserAndFriendAndState(toUser, fromUser, State.ACCEPT)
+                .isPresent()) {
+            throw new RuntimeException("이미 친구입니다.");
+        }
     }
 }

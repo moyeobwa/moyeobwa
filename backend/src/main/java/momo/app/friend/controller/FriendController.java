@@ -16,23 +16,23 @@ import java.util.List;
 public class FriendController {
     private final FriendService friendService;
 
-    @PostMapping("/request/{id}")
+    @PostMapping("/request/{nickName}")
     ResponseEntity<Void> request(
-            @PathVariable Long id,
+            @PathVariable String nickName,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        friendService.request(id, authUser);
+        friendService.request(nickName, authUser);
 
         return ResponseEntity.ok()
                 .build();
     }
 
-    @PostMapping("/accept/{id}")
+    @PostMapping("/accept/{nickName}")
     ResponseEntity<Void> accept(
-            @PathVariable Long id,
+            @PathVariable String nickName,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        friendService.accept(id, authUser);
+        friendService.accept(nickName, authUser);
 
         return ResponseEntity.ok()
                 .build();
