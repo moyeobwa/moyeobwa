@@ -16,37 +16,45 @@ import java.util.List;
 public class FriendController {
     private final FriendService friendService;
 
-    @PostMapping("/request/{nickName}")
+    @PostMapping("/request/{id}")
     ResponseEntity<Void> request(
-            @PathVariable String nickName,
+            @PathVariable Long id,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        friendService.request(nickName, authUser);
+        friendService.request(id, authUser);
 
         return ResponseEntity.ok()
                 .build();
     }
 
-    @PostMapping("/accept/{nickName}")
+    @PostMapping("/accept/{id}")
     ResponseEntity<Void> accept(
-            @PathVariable String nickName,
+            @PathVariable Long id,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        friendService.accept(nickName, authUser);
+        friendService.accept(id, authUser);
 
         return ResponseEntity.ok()
                 .build();
     }
 
-    @GetMapping("/friendList")
+    @DeleteMapping("/reject/{id}")
+    ResponseEntity<Void> reject(@PathVariable Long id) {
+        friendService.reject(id);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    @GetMapping("/")
     ResponseEntity<List<FriendResponse>> getFriends(@AuthenticationPrincipal AuthUser authUser) {
         List<FriendResponse> friendResponses = friendService.getFriends(authUser);
 
         return ResponseEntity.ok(friendResponses);
     }
 
-    @GetMapping("/requestList")
-    ResponseEntity<List<FriendResponse>> getRequest(@AuthenticationPrincipal AuthUser authUser) {
+    @GetMapping("/requests")
+    ResponseEntity<List<FriendResponse>> getRequests(@AuthenticationPrincipal AuthUser authUser) {
         List<FriendResponse> friendResponses = friendService.getRequest(authUser);
 
         return ResponseEntity.ok(friendResponses);

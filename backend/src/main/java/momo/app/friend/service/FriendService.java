@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
 import momo.app.friend.domain.Friend;
 import momo.app.friend.domain.FriendRepository;
-import momo.app.friend.domain.State;
+import momo.app.friend.domain.FriendState;
 import momo.app.friend.dto.FriendResponse;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
@@ -23,40 +23,47 @@ public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
 
-    public void request(String nickName, AuthUser authUser) {
+    public void request(Long id, AuthUser authUser) {
         User fromUser = findUser(authUser.getId());
-        User toUser = findUserByNickName(nickName);
+        User toUser = findUser(id);
 
         validateFriendRequest(fromUser, toUser);
 
         Friend fromFriend = Friend.builder()
-                .user(fromUser)
-                .friend(toUser)
-                .state(State.WAITING)
+                .fromUser(fromUser)
+                .toUser(toUser)
+                .friendState(FriendState.WAITING)
                 .build();
         friendRepository.save(fromFriend);
         fromUser.addFriend(fromFriend);
     }
 
-    public void accept(String nickName, AuthUser authUser) {
-        Friend fromFriend = findFriendByNickName(nickName);
+    public void accept(Long id, AuthUser authUser) {
+        Friend fromFriend = findFriend(id);
         User toUser = findUser(authUser.getId());
-        User fromUser = fromFriend.getUser();
+        User fromUser = fromFriend.getFromUser();
 
-        fromFriend.acceptFriendRequest();
+        fromFriend.accept();
         Friend toFriend = Friend.builder()
-                .user(toUser)
-                .friend(fromUser)
-                .state(State.ACCEPT)
+                .fromUser(toUser)
+                .toUser(fromUser)
+                .friendState(FriendState.ACCEPT)
                 .build();
         friendRepository.save(toFriend);
         fromUser.addFriend(toFriend);
     }
 
+    public void reject(Long id) {
+        Friend friendRequest = friendRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Friend request not found"));
+
+        friendRepository.delete(friendRequest);
+    }
+
     public List<FriendResponse> getFriends(AuthUser authUser) {
         User user = findUser(authUser.getId());
 
-        List<Friend> friends = friendRepository.findAllByUser(user);
+        List<Friend> friends = friendRepository.findAllByFromUser(user);
 
         return friends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
@@ -67,7 +74,7 @@ public class FriendService {
     public List<FriendResponse> getRequest(AuthUser authUser) {
         User user = findUser(authUser.getId());
 
-        List<Friend> requestFriends = friendRepository.findByFriendAndState(user, State.WAITING);
+        List<Friend> requestFriends = friendRepository.findByToUserAndState(user, FriendState.WAITING);
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
@@ -85,29 +92,30 @@ public class FriendService {
                 .orElseThrow(() -> new NoSuchElementException("user not found"));
     }
 
-    private Friend findFriendByNickName(String nickName) {
-        User user = findUserByNickName(nickName);
+    private Friend findFriend(Long id) {
+        User user = findUser(id);
 
-        return friendRepository.findByUser(user)
+        return friendRepository.findByFromUser(user)
                 .orElseThrow(() -> new NoSuchElementException("friend not found"));
     }
 
     private void validateFriendRequest(User fromUser, User toUser) {
-        if(friendRepository.findByUserAndFriendAndState(fromUser, toUser, State.WAITING)
-                .isPresent()) {
-            throw new RuntimeException("이미 요청한 친구신청입니다.");
+        Friend fromUsersFriend = friendRepository.findByFromUserAndToUser(fromUser, toUser).orElse(null);
+        if(fromUsersFriend != null) {
+            if(fromUsersFriend.getFriendState() != FriendState.WAITING) {
+                throw new RuntimeException("이미 요청한 친구신청입니다.");
+            } else {
+                throw new RuntimeException("이미 친구입니다.");
+            }
         }
-        if(friendRepository.findByUserAndFriendAndState(toUser, fromUser, State.WAITING)
-                .isPresent()) {
-            throw new RuntimeException("이미 요청받은 친구신청입니다.");
-        }
-        if(friendRepository.findByUserAndFriendAndState(fromUser, toUser, State.ACCEPT)
-                .isPresent()) {
-            throw new RuntimeException("이미 친구입니다.");
-        }
-        if(friendRepository.findByUserAndFriendAndState(toUser, fromUser, State.ACCEPT)
-                .isPresent()) {
-            throw new RuntimeException("이미 친구입니다.");
+
+        Friend toUsersFriend = friendRepository.findByFromUserAndToUser(fromUser, toUser).orElse(null);
+        if(toUsersFriend != null) {
+            if(toUsersFriend.getFriendState() != FriendState.WAITING) {
+                throw new RuntimeException("이미 요청받은 친구신청입니다.");
+            } else {
+                throw new RuntimeException("이미 친구입니다.");
+            }
         }
     }
 }

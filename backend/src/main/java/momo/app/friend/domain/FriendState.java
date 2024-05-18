@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum State {
+public enum FriendState {
     ACCEPT("STATE_ACCEPT"), WAITING("STATE_WAITING");
 
     private final String key;

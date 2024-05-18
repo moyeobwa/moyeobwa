@@ -6,9 +6,13 @@ import momo.app.user.domain.User;
 
 public record FriendResponse(
         Long id,
-        User friend
+        Long userId,
+        String nickName
 ) {
     public static FriendResponse from(Friend friend) {
-        return new FriendResponse(friend.getId(), friend.getFriend());
+        return new FriendResponse(
+                friend.getId(),
+                friend.getToUser().getId(),
+                friend.getToUser().getName());
     }
 }

@@ -3,7 +3,7 @@ package momo.app.friend.service;
 import momo.app.auth.dto.AuthUser;
 import momo.app.friend.domain.Friend;
 import momo.app.friend.domain.FriendRepository;
-import momo.app.friend.domain.State;
+import momo.app.friend.domain.FriendState;
 import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
@@ -46,14 +46,14 @@ class FriendServiceTest {
     void testRequest() {
         AuthUser authUser = createAuthUser(user1);
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
-        when(userRepository.findByNickname("user2")).thenReturn(Optional.of(user2));
-        when(friendRepository.findByUserAndFriendAndState(any(), any(), any())).thenReturn(Optional.empty());
+        when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+        when(friendRepository.findByFromUserAndToUser(any(), any())).thenReturn(Optional.empty());
 
-        friendService.request("user2", authUser);
+        friendService.request(2L, authUser);
 
         verify(friendRepository, times(1)).save(any());
         verify(userRepository, times(1)).findById(user1.getId());
-        verify(userRepository, times(1)).findByNickname("user2");
+        verify(userRepository, times(1)).findById(user2.getId());
     }
 
     @Test
@@ -62,38 +62,38 @@ class FriendServiceTest {
 
 
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
-        when(userRepository.findByNickname("user2")).thenReturn(Optional.of(user2));
-        when(friendRepository.findByUserAndFriendAndState(any(), any(), any())).thenReturn(Optional.empty());
+        when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+        when(friendRepository.findByFromUserAndToUser(any(), any())).thenReturn(Optional.empty());
 
         // 첫 번째 호출
-        friendService.request("user2", authUser);
+        friendService.request(2L, authUser);
 
-        when(friendRepository.findByUserAndFriendAndState(any(), any(), any()))
+        when(friendRepository.findByFromUserAndToUser(any(), any()))
                 .thenReturn(Optional.of(Friend.builder()
-                        .user(user1)
-                        .friend(user2)
-                        .state(State.WAITING)
+                        .fromUser(user2)
+                        .toUser(user1)
+                        .friendState(FriendState.WAITING)
                         .build()));
 
         // 두 번째 호출
-        assertThrows(RuntimeException.class, () -> friendService.request("user2", authUser));
+        assertThrows(RuntimeException.class, () -> friendService.request(2L, authUser));
 
-        verify(friendRepository, times(5)).findByUserAndFriendAndState(any(), any(), any());
+        verify(friendRepository, times(3)).findByFromUserAndToUser(any(), any());
     }
 
     @Test
     void testAccept() {
         AuthUser authUser = createAuthUser(user1);
         Friend friend = Friend.builder()
-                .user(user2)
-                .friend(user1)
-                .state(State.WAITING)
+                .fromUser(user2)
+                .toUser(user1)
+                .friendState(FriendState.WAITING)
                 .build();
-        when(userRepository.findByNickname("user2")).thenReturn(Optional.of(user2));
-        when(friendRepository.findByUser(user2)).thenReturn(Optional.of(friend));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
+        when(friendRepository.findByFromUser(user2)).thenReturn(Optional.of(friend));
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
 
-        friendService.accept("user2", authUser);
+        friendService.accept(2L, authUser);
 
         verify(friendRepository, times(1)).save(any());
         verify(userRepository, times(1)).findById(user1.getId());

@@ -16,25 +16,25 @@ public class Friend {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "from_user_id")
+    private User fromUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "friend_id")
-    private User friend;
+    @JoinColumn(name = "to_user_id")
+    private User toUser;
 
     @Enumerated(EnumType.STRING)
-    private State state;
+    private FriendState friendState;
 
 
     @Builder
-    public Friend(User user, User friend, State state) {
-        this.user = user;
-        this.friend = friend;
-        this.state = state;
+    public Friend(User fromUser, User toUser, FriendState friendState) {
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+        this.friendState = friendState;
     }
 
-    public void acceptFriendRequest() {
-        this.state = State.ACCEPT;
+    public void accept() {
+        this.friendState = FriendState.ACCEPT;
     }
 }
