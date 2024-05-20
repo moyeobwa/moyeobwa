@@ -1,6 +1,7 @@
 package momo.app.application.service;
 
 import static momo.app.application.exception.ApplicationErrorCode.NOT_FOUND_APPLICATION;
+import static momo.app.chat.exception.ChatErrorCode.CHAT_ROOM_NOT_FOUND;
 import static momo.app.gathering.exception.GatheringErrorCode.GATHERING_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,11 @@ import momo.app.application.domain.Application;
 import momo.app.application.domain.ApplicationRepository;
 import momo.app.application.dto.ApplicationCreateRequest;
 import momo.app.auth.dto.AuthUser;
+import momo.app.chat.domain.chatroom.ChatRoom;
+import momo.app.chat.domain.chatroom.ChatRoomRepository;
+import momo.app.chat.domain.chatroom.ChatRoomUser;
+import momo.app.chat.domain.chatroom.ChatRoomUserRepository;
+import momo.app.chat.exception.ChatErrorCode;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringMember;
@@ -27,6 +33,8 @@ public class ApplicationCommandService {
     private final UserRepository userRepository;
     private final GatheringRepository gatheringRepository;
     private final GatheringMemberRepository gatheringMemberRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
     public Long createApplication(AuthUser authUser, ApplicationCreateRequest request) {
         User user = findUser(authUser.getId());
@@ -49,6 +57,16 @@ public class ApplicationCommandService {
                 .gathering(gathering)
                 .user(user)
                 .build());
+        ChatRoom chatRoom = findChatRoom(gathering);
+        chatRoomUserRepository.save(ChatRoomUser.builder()
+                .chatRoom(chatRoom)
+                .user(user)
+                .build());
+    }
+
+    private ChatRoom findChatRoom(Gathering gathering) {
+        return chatRoomRepository.findById(gathering.getChatRoomId())
+                .orElseThrow(() -> new BusinessException(CHAT_ROOM_NOT_FOUND));
     }
 
     private Application findApplicationWithGathering(Long id) {
