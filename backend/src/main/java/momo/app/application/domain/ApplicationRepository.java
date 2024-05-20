@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
-    @Query("select ap from Application ap join fetch Gathering g")
+    @Query("select ap from Application ap join fetch ap.gathering where ap.id = :id")
     Optional<Application> findByIdWithGathering(Long id);
 
 }

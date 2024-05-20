@@ -20,7 +20,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
         ChatRoom result = jpaQueryFactory.selectFrom(chatRoom)
                 .join(chatRoom.chatRoomUsers, chatRoomUser)
                 .join(chatRoomUser.user, user)
-                .where(chatRoom.id.eq(chatRoomId), chatRoom.managerId.eq(userId).or(user.id.eq(userId)))
+                .where(chatRoom.id.eq(chatRoomId).or(chatRoom.managerId.eq(userId).or(user.id.eq(userId))))
                 .fetchFirst();
 
         return result != null;

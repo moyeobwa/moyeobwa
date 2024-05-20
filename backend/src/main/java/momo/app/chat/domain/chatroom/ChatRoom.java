@@ -32,12 +32,8 @@ public class ChatRoom {
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatRoomUser> chatRoomUsers = new ArrayList<>();
 
-    @Column(nullable = false)
-    private boolean isActive;
-
     @Builder
     public ChatRoom(Long managerId) {
-        this.isActive = false;
         this.managerId = managerId;
     }
 }
