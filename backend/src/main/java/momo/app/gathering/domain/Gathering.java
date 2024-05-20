@@ -3,10 +3,13 @@ package momo.app.gathering.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -14,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import momo.app.auth.dto.AuthUser;
+import momo.app.chat.domain.chatroom.ChatRoom;
 import momo.app.common.domain.BaseTime;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
@@ -38,13 +42,21 @@ public class Gathering extends BaseTime {
     @ColumnDefault(value = "false")
     private boolean isDeleted;
 
+    @Column(nullable = false, unique = true)
+    private Long chatRoomId;
+
     @OneToMany(mappedBy = "gathering")
     private List<GatheringTag> gatheringTags = new ArrayList<>();
 
     @Builder
-    public Gathering(GatheringInfo gatheringInfo, Long managerId) {
+    public Gathering(
+            GatheringInfo gatheringInfo,
+            Long managerId,
+            Long chatRoomId
+    ) {
         this.gatheringInfo = gatheringInfo;
         this.managerId = managerId;
+        this.chatRoomId = chatRoomId;
     }
 
     public void addGatheringTag(GatheringTag gatheringTag) {
