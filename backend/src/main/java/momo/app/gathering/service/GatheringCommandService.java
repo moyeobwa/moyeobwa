@@ -1,6 +1,5 @@
 package momo.app.gathering.service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
