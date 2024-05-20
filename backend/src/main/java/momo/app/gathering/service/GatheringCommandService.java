@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
 import momo.app.chat.domain.chatroom.ChatRoom;
 import momo.app.chat.domain.chatroom.ChatRoomRepository;
+import momo.app.chat.domain.chatroom.ChatRoomUser;
+import momo.app.chat.domain.chatroom.ChatRoomUserRepository;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringInfo;
 import momo.app.gathering.domain.GatheringMember;
@@ -34,6 +36,7 @@ public class GatheringCommandService {
     private final TagRepository tagRepository;
     private final GatheringTagRepository gatheringTagRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
     public Long createGathering(GatheringCreateRequest request, AuthUser authUser) {
         User user = findUser(authUser.getId());
@@ -47,6 +50,11 @@ public class GatheringCommandService {
 
         ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder()
                 .managerId(authUser.getId())
+                .build());
+
+        chatRoomUserRepository.save(ChatRoomUser.builder()
+                .user(user)
+                .chatRoom(chatRoom)
                 .build());
 
         Gathering gathering = Gathering.builder()
