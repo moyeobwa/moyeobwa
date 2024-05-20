@@ -1,15 +1,14 @@
 package momo.app.gathering.domain;
 
+import static momo.app.gathering.exception.GatheringErrorCode.NOT_MANAGER;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -17,8 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import momo.app.auth.dto.AuthUser;
-import momo.app.chat.domain.chatroom.ChatRoom;
 import momo.app.common.domain.BaseTime;
+import momo.app.common.error.exception.BusinessException;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -65,7 +64,7 @@ public class Gathering extends BaseTime {
 
     public void validateManager(AuthUser authUser) {
         if (authUser.getId() != managerId) {
-            throw new IllegalStateException("Gathering can only be modified by the host.");
+            throw new BusinessException(NOT_MANAGER);
         }
     }
 

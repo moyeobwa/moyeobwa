@@ -42,4 +42,8 @@ public class Application {
         this.gathering = gathering;
         this.status = ApplicationStatus.PENDING;
     }
+
+    public void approve() {
+        this.status = ApplicationStatus.APPROVED;
+    }
 }
