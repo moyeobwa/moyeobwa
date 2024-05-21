@@ -59,7 +59,7 @@ public class FriendService {
         Friend friendRequest = findFriend(id);
         User user = findUser(authUser.getId());
 
-        validateFriendDelete(user, friendRequest);
+        friendRequest.validateFriendDelete(user, friendRequest);
 
         friendRepository.delete(friendRequest);
     }
@@ -68,13 +68,12 @@ public class FriendService {
         Friend fromFriend = findFriend(id);
         User user = findUser(authUser.getId());
 
-        validateFriendDelete(user, fromFriend);
+        fromFriend.validateFriendDelete(user, fromFriend);
 
         Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
                 .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
 
-        friendRepository.delete(fromFriend);
-        friendRepository.delete(toFriend);
+        friendRepository.deleteAllByIds(List.of(fromFriend.getId(), toFriend.getId()));
     }
 
     public List<FriendResponse> getFriends(AuthUser authUser) {
@@ -116,12 +115,6 @@ public class FriendService {
             throw new BusinessException(FriendErrorCode.FRIEND_REQUEST_ALREADY_EXISTS);
         } else if (friends.size() == 2) {
             throw new BusinessException(FriendErrorCode.FRIEND_ALREADY_EXISTS);
-        }
-    }
-
-    private void validateFriendDelete(User user, Friend friend) {
-        if (!user.equals(friend.getFromUser()) || !user.equals(friend.getToUser())) {
-            throw new BusinessException(FriendErrorCode.FRIEND_DELETE_PERMISSION_DENIED);
         }
     }
 }

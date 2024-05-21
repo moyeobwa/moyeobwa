@@ -19,5 +19,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     List<Friend> findAllByToUserAndState(User toUser, FriendState friendState);
 
-
+    @Query("DELETE FROM Friend f WHERE f.id IN :ids")
+    void deleteAllByIds(List<Long> ids);
 }
