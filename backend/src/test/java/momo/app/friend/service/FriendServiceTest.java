@@ -1,9 +1,11 @@
 package momo.app.friend.service;
 
 import momo.app.auth.dto.AuthUser;
+import momo.app.common.error.exception.BusinessException;
 import momo.app.friend.domain.Friend;
 import momo.app.friend.domain.FriendRepository;
 import momo.app.friend.domain.FriendState;
+import momo.app.friend.exception.FriendErrorCode;
 import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
@@ -47,7 +49,6 @@ class FriendServiceTest {
         AuthUser authUser = createAuthUser(user1);
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
         when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
-        when(friendRepository.findByFromUserAndToUser(any(), any())).thenReturn(Optional.empty());
 
         friendService.request(2L, authUser);
 
@@ -57,28 +58,15 @@ class FriendServiceTest {
     }
 
     @Test
-    void testRequestRuntimeExceptionOnSecondCall() {
+    void testRequestExceptionOnSecondCall() {
         AuthUser authUser = createAuthUser(user1);
-
-
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
         when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
-        when(friendRepository.findByFromUserAndToUser(any(), any())).thenReturn(Optional.empty());
+        when(friendRepository.findByTwoUser(any(), any())).thenThrow(new BusinessException(FriendErrorCode.FRIEND_REQUEST_ALREADY_EXISTS));
 
-        // 첫 번째 호출
-        friendService.request(2L, authUser);
+        assertThrows(BusinessException.class, () -> friendService.request(2L, authUser));
 
-        when(friendRepository.findByFromUserAndToUser(any(), any()))
-                .thenReturn(Optional.of(Friend.builder()
-                        .fromUser(user2)
-                        .toUser(user1)
-                        .friendState(FriendState.WAITING)
-                        .build()));
-
-        // 두 번째 호출
-        assertThrows(RuntimeException.class, () -> friendService.request(2L, authUser));
-
-        verify(friendRepository, times(3)).findByFromUserAndToUser(any(), any());
+        verify(friendRepository, times(1)).findByTwoUser(any(), any());
     }
 
     @Test
@@ -89,11 +77,11 @@ class FriendServiceTest {
                 .toUser(user1)
                 .friendState(FriendState.WAITING)
                 .build();
-        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
-        when(friendRepository.findByFromUser(user2)).thenReturn(Optional.of(friend));
+        when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+        when(friendRepository.findById(1L)).thenReturn(Optional.of(friend));
         when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
 
-        friendService.accept(2L, authUser);
+        friendService.accept(1L, authUser);
 
         verify(friendRepository, times(1)).save(any());
         verify(userRepository, times(1)).findById(user1.getId());
