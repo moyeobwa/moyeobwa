@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import momo.app.common.error.exception.BusinessException;
+import momo.app.friend.exception.FriendErrorCode;
 import momo.app.user.domain.User;
 
 @Entity
@@ -26,7 +28,6 @@ public class Friend {
     @Enumerated(EnumType.STRING)
     private FriendState friendState;
 
-
     @Builder
     public Friend(User fromUser, User toUser, FriendState friendState) {
         this.fromUser = fromUser;
@@ -36,5 +37,11 @@ public class Friend {
 
     public void accept() {
         this.friendState = FriendState.ACCEPT;
+    }
+
+    public void validateFriendDelete(User user, Friend friend) {
+        if (!user.equals(friend.getFromUser()) || !user.equals(friend.getToUser())) {
+            throw new BusinessException(FriendErrorCode.FRIEND_DELETE_PERMISSION_DENIED);
+        }
     }
 }
