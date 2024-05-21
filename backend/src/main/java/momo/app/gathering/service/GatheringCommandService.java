@@ -1,9 +1,12 @@
 package momo.app.gathering.service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
+import momo.app.chat.domain.chatroom.ChatRoom;
+import momo.app.chat.domain.chatroom.ChatRoomRepository;
+import momo.app.chat.domain.chatroom.ChatRoomUser;
+import momo.app.chat.domain.chatroom.ChatRoomUserRepository;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringInfo;
 import momo.app.gathering.domain.GatheringMember;
@@ -32,8 +35,10 @@ public class GatheringCommandService {
     private final S3Service s3Service;
     private final TagRepository tagRepository;
     private final GatheringTagRepository gatheringTagRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
-    public Long createGathering(GatheringCreateRequest request, AuthUser authUser) {
+    public Long create(GatheringCreateRequest request, AuthUser authUser) {
         User user = findUser(authUser.getId());
         String uploadedImageUrl = s3Service.upload(request.image());
         GatheringInfo gatheringInfo = GatheringInfo.of(
@@ -42,9 +47,20 @@ public class GatheringCommandService {
                 request.description(),
                 uploadedImageUrl
         );
+
+        ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.builder()
+                .managerId(authUser.getId())
+                .build());
+
+        chatRoomUserRepository.save(ChatRoomUser.builder()
+                .user(user)
+                .chatRoom(chatRoom)
+                .build());
+
         Gathering gathering = Gathering.builder()
                 .gatheringInfo(gatheringInfo)
                 .managerId(user.getId())
+                .chatRoomId(chatRoom.getId())
                 .build();
 
         gatheringRepository.save(gathering);

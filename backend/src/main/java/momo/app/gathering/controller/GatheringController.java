@@ -35,7 +35,7 @@ public class GatheringController {
     ) {
 
         GatheringCreateRequest gatheringCreateRequest = GatheringCreateRequest.of(request, image);
-        Long id = gatheringCommandService.createGathering(gatheringCreateRequest, authUser);
+        Long id = gatheringCommandService.create(gatheringCreateRequest, authUser);
 
         return ResponseEntity.created(URI.create("/api/v1/gatherings/" + id))
                 .build();

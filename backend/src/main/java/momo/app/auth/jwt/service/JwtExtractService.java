@@ -42,6 +42,9 @@ public class JwtExtractService {
     //클라이언트 요청으로 refresh 토큰 header에서 추출
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return Optional.empty();
+        }
         for (Cookie cookie : cookies) {
             if(refreshHeader.equals(cookie.getName())) {
                 return Optional.ofNullable(cookie.getValue());
