@@ -63,10 +63,7 @@ public class ChatMessageRepositoryImpl implements ChatMessageRepositoryCustom {
     }
 
     private boolean existsNextValue(List<ChatMessageResponse> chatMessageResponses, int pageSize) {
-        if (chatMessageResponses.size() > pageSize) {
-            return true;
-        }
-        return false;
+        return chatMessageResponses.size() > pageSize;
     }
 
     private BooleanExpression chatRoomIdEq(Long id) {

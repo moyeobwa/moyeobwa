@@ -38,7 +38,7 @@ public class GatheringCommandService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
 
-    public Long createGathering(GatheringCreateRequest request, AuthUser authUser) {
+    public Long create(GatheringCreateRequest request, AuthUser authUser) {
         User user = findUser(authUser.getId());
         String uploadedImageUrl = s3Service.upload(request.image());
         GatheringInfo gatheringInfo = GatheringInfo.of(
