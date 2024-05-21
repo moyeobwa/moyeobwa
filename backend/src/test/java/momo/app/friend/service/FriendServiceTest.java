@@ -11,9 +11,12 @@ import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import static momo.app.auth.dto.AuthUser.createAuthUser;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
+@ExtendWith(MockitoExtension.class)
 class FriendServiceTest {
     @Mock
     private UserRepository userRepository;
