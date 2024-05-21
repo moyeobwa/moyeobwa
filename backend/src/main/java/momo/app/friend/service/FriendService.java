@@ -2,12 +2,15 @@ package momo.app.friend.service;
 
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
+import momo.app.common.error.exception.BusinessException;
 import momo.app.friend.domain.Friend;
 import momo.app.friend.domain.FriendRepository;
 import momo.app.friend.domain.FriendState;
 import momo.app.friend.dto.FriendResponse;
+import momo.app.friend.exception.FriendErrorCode;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
+import momo.app.user.exception.UserErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,31 +42,46 @@ public class FriendService {
     }
 
     public void accept(Long id, AuthUser authUser) {
-        Friend fromFriend = findFriend(id);
-        User toUser = findUser(authUser.getId());
-        User fromUser = fromFriend.getFromUser();
+        Friend requestFriend = findFriend(id);
+        User fromUser = findUser(authUser.getId());
+        User toUser = requestFriend.getFromUser();
 
-        fromFriend.accept();
-        Friend toFriend = Friend.builder()
-                .fromUser(toUser)
-                .toUser(fromUser)
+        requestFriend.accept();
+        Friend acceptFriend = Friend.builder()
+                .fromUser(fromUser)
+                .toUser(toUser)
                 .friendState(FriendState.ACCEPT)
                 .build();
-        friendRepository.save(toFriend);
-        fromUser.addFriend(toFriend);
+        friendRepository.save(acceptFriend);
+        fromUser.addFriend(acceptFriend);
     }
 
-    public void reject(Long id) {
-        Friend friendRequest = friendRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("Friend request not found"));
+    public void reject(Long id, AuthUser authUser) {
+        Friend friendRequest = findFriend(id);
+        User user = findUser(authUser.getId());
+
+        validateFriendDelete(user, friendRequest);
 
         friendRepository.delete(friendRequest);
+    }
+
+    public void delete(Long id, AuthUser authUser) {
+        Friend fromFriend = findFriend(id);
+        User user = findUser(authUser.getId());
+
+        validateFriendDelete(user, fromFriend);
+
+        Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
+                .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
+
+        friendRepository.delete(fromFriend);
+        friendRepository.delete(toFriend);
     }
 
     public List<FriendResponse> getFriends(AuthUser authUser) {
         User user = findUser(authUser.getId());
 
-        List<Friend> friends = friendRepository.findAllByFromUser(user);
+        List<Friend> friends = friendRepository.findAllByFromUserAndState(user, FriendState.ACCEPT);
 
         return friends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
@@ -74,7 +92,7 @@ public class FriendService {
     public List<FriendResponse> getRequest(AuthUser authUser) {
         User user = findUser(authUser.getId());
 
-        List<Friend> requestFriends = friendRepository.findByToUserAndState(user, FriendState.WAITING);
+        List<Friend> requestFriends = friendRepository.findAllByToUserAndState(user, FriendState.WAITING);
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
@@ -84,38 +102,27 @@ public class FriendService {
 
     private User findUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("user not found"));
-    }
-
-    private User findUserByNickName(String nickName) {
-        return userRepository.findByNickname(nickName)
-                .orElseThrow(() -> new NoSuchElementException("user not found"));
+                .orElseThrow(() -> new BusinessException(UserErrorCode.User_NOT_FOUND));
     }
 
     private Friend findFriend(Long id) {
-        User user = findUser(id);
-
-        return friendRepository.findByFromUser(user)
-                .orElseThrow(() -> new NoSuchElementException("friend not found"));
+        return friendRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
     }
 
     private void validateFriendRequest(User fromUser, User toUser) {
-        Friend fromUsersFriend = friendRepository.findByFromUserAndToUser(fromUser, toUser).orElse(null);
-        if(fromUsersFriend != null) {
-            if(fromUsersFriend.getFriendState() != FriendState.WAITING) {
-                throw new RuntimeException("이미 요청한 친구신청입니다.");
-            } else {
-                throw new RuntimeException("이미 친구입니다.");
-            }
-        }
+        List<Friend> friends = friendRepository.findByTwoUser(fromUser, toUser);
 
-        Friend toUsersFriend = friendRepository.findByFromUserAndToUser(fromUser, toUser).orElse(null);
-        if(toUsersFriend != null) {
-            if(toUsersFriend.getFriendState() != FriendState.WAITING) {
-                throw new RuntimeException("이미 요청받은 친구신청입니다.");
-            } else {
-                throw new RuntimeException("이미 친구입니다.");
-            }
+        if (friends.size() == 1) {
+            throw new BusinessException(FriendErrorCode.FRIEND_REQUEST_ALREADY_EXISTS);
+        } else if (friends.size() == 2) {
+            throw new BusinessException(FriendErrorCode.FRIEND_ALREADY_EXISTS);
+        }
+    }
+
+    private void validateFriendDelete(User user, Friend friend) {
+        if (!user.equals(friend.getFromUser()) || !user.equals(friend.getToUser())) {
+            throw new BusinessException(FriendErrorCode.FRIEND_DELETE_PERMISSION_DENIED);
         }
     }
 }
