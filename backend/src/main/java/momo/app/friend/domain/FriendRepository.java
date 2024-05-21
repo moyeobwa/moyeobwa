@@ -12,13 +12,12 @@ import java.util.Optional;
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     Optional<Friend> findByFromUser(User fromUser);
 
-    Optional<Friend> findByFromUserAndToUser(User fromUser, User toUser);
+    @Query("SELECT f FROM Friend f WHERE (f.fromUser = :user1 AND f.toUser = :user2) OR (f.fromUser = :user2 AND f.toUser = :user1)")
+    List<Friend> findByTwoUser(User user1, User user2);
 
-    @Query("SELECT f FROM Friend f JOIN FETCH f.fromUser WHERE f.fromUser = :fromUser")
-    List<Friend> findAllByFromUser(User fromUser);
+    List<Friend> findAllByFromUserAndState(User fromUser, FriendState friendState);
 
-    @Query("SELECT f From Friend f JOIN FETCH f.fromUser WHERE f.toUser = :toUser AND f.friendState = :friendState")
-    List<Friend> findByToUserAndState(User toUser, FriendState friendState);
+    List<Friend> findAllByToUserAndState(User toUser, FriendState friendState);
 
 
 }
