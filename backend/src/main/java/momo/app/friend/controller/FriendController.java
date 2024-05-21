@@ -39,8 +39,16 @@ public class FriendController {
     }
 
     @DeleteMapping("/reject/{id}")
-    ResponseEntity<Void> reject(@PathVariable Long id) {
-        friendService.reject(id);
+    ResponseEntity<Void> reject(@PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+        friendService.reject(id, authUser);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+        friendService.delete(id, authUser);
 
         return ResponseEntity.ok()
                 .build();
