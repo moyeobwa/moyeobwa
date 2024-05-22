@@ -1,0 +1,69 @@
+.card {
+    width: 300px;
+    cursor: pointer;
+    background-color: #f1f1f3;
+    position: relative;
+}
+
+.card .card_image {
+    flex: 1;
+    height: 100px;
+
+}
+
+.card .card_title {
+    font-weight: bold;
+}
+
+.card .card_content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+}
+
+.card .card_content .card_title {
+    font-size: 20px;
+    color: black;
+    text-transform: capitalize;
+}
+
+.card .card_content .card_describe {
+    color: black;
+    font-size: 13px;
+}
+
+.card .card_date {
+    color: #6e6b80;
+    font-size: 12px;
+}
+
+.card .card_arrow {
+    position: absolute;
+    background: rgb(246, 113, 120);
+    padding: 0.4rem;
+    border-top-left-radius: 0.6rem;
+    border-bottom-right-radius: 0.6rem;
+    bottom: 0;
+    right: 0;
+    transition: 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card svg {
+    transition: 0.2s;
+}
+
+.card:hover .card_title {
+    color: rgb(255, 133, 140);
+}
+
+.card:hover .card_arrow {
+    background: rgb(255, 133, 140);
+}
+
+.card:hover .card_arrow svg {
+    transform: translateX(3px);
+}
