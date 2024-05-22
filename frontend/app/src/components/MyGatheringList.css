@@ -1,0 +1,26 @@
+.gathering_list{
+    height: 350px;
+}
+
+.gathering_list h2 {
+    color: #fff;
+    text-align: center;
+}
+  
+.gathering_list ul {
+    list-style-type: none;
+    padding: 0;
+}
+  
+.gathering_list ul li {
+    padding: 10px;
+}
+  
+.gathering_list ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+  
+.gathering_list ul li a:hover {
+    text-decoration: underline;
+}
