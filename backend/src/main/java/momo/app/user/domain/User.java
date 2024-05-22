@@ -42,6 +42,7 @@ public class User extends BaseTime {
     private String interest;
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<Friend> friendList = new ArrayList<>();
 
     public void addFriend(Friend friend) {
