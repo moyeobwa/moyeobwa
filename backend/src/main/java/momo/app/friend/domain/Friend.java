@@ -26,17 +26,17 @@ public class Friend {
     private User toUser;
 
     @Enumerated(EnumType.STRING)
-    private FriendState friendState;
+    private FriendState state;
 
     @Builder
     public Friend(User fromUser, User toUser, FriendState friendState) {
         this.fromUser = fromUser;
         this.toUser = toUser;
-        this.friendState = friendState;
+        this.state = friendState;
     }
 
     public void accept() {
-        this.friendState = FriendState.ACCEPT;
+        this.state = FriendState.ACCEPT;
     }
 
     public void validateFriendDelete(User user, Friend friend) {
