@@ -37,7 +37,6 @@ public class FriendService {
                 .friendState(FriendState.WAITING)
                 .build();
         friendRepository.save(fromFriend);
-        fromUser.addFriend(fromFriend);
     }
 
     public void accept(Long id, AuthUser authUser) {
@@ -52,7 +51,6 @@ public class FriendService {
                 .friendState(FriendState.ACCEPT)
                 .build();
         friendRepository.save(acceptFriend);
-        fromUser.addFriend(acceptFriend);
     }
 
     public void reject(Long id, AuthUser authUser) {
