@@ -15,7 +15,7 @@
 
 
 .Header .menu {
-    background-color: RGB(255, 133, 140);
+    background-color: rgb(255, 133, 140);
     padding:15px 10px;
     width: 97.5%;
     display: flex;
