@@ -24,7 +24,7 @@ public class ApplicationController {
     public ResponseEntity<Void> create(
             @RequestBody ApplicationCreateRequest request,
             @AuthenticationPrincipal AuthUser authUser) {
-        Long applicationId = applicationCommandService.createApplication(authUser, request);
+        Long applicationId = applicationCommandService.create(authUser, request);
         return ResponseEntity.created(URI.create("/api/v1/applications/" + applicationId))
                 .build();
     }
@@ -33,10 +33,23 @@ public class ApplicationController {
     public ResponseEntity<Void> approve(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id) {
-        applicationCommandService.approveApplication(authUser, id);
+        applicationCommandService.approve(authUser, id);
 
         return ResponseEntity.ok()
                 .build();
     }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<Void> reject(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id
+    ) {
+        applicationCommandService.reject(authUser, id);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
+
 
 }

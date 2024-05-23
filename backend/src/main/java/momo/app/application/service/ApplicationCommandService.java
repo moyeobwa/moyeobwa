@@ -3,6 +3,7 @@ package momo.app.application.service;
 import static momo.app.application.exception.ApplicationErrorCode.NOT_FOUND_APPLICATION;
 import static momo.app.chat.exception.ChatErrorCode.CHAT_ROOM_NOT_FOUND;
 import static momo.app.gathering.exception.GatheringErrorCode.GATHERING_NOT_FOUND;
+import static momo.app.user.exception.UserErrorCode.User_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
 import momo.app.application.domain.Application;
@@ -13,7 +14,6 @@ import momo.app.chat.domain.chatroom.ChatRoom;
 import momo.app.chat.domain.chatroom.ChatRoomRepository;
 import momo.app.chat.domain.chatroom.ChatRoomUser;
 import momo.app.chat.domain.chatroom.ChatRoomUserRepository;
-import momo.app.chat.exception.ChatErrorCode;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringMember;
@@ -36,7 +36,7 @@ public class ApplicationCommandService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
 
-    public Long createApplication(AuthUser authUser, ApplicationCreateRequest request) {
+    public Long create(AuthUser authUser, ApplicationCreateRequest request) {
         User user = findUser(authUser.getId());
         Gathering gathering = findGathering(request.gatheringId());
         // TODO: 모임 정원 검증
@@ -47,9 +47,9 @@ public class ApplicationCommandService {
                 .getId();
     }
 
-    public void approveApplication(AuthUser authUser, Long id) {
+    public void approve(AuthUser authUser, Long id) {
         User user = findUser(authUser.getId());
-        Application application = findApplicationWithGathering(id);
+        Application application = findApplicationForPendingStatusWithGathering(id);
         Gathering gathering = application.getGathering();
         gathering.validateManager(authUser);
         application.approve();
@@ -64,13 +64,20 @@ public class ApplicationCommandService {
                 .build());
     }
 
+    public void reject(AuthUser authUser, Long id) {
+        Application application = findApplicationForPendingStatusWithGathering(id);
+        Gathering gathering = application.getGathering();
+        gathering.validateManager(authUser);
+        application.reject();
+    }
+
     private ChatRoom findChatRoom(Gathering gathering) {
         return chatRoomRepository.findById(gathering.getChatRoomId())
                 .orElseThrow(() -> new BusinessException(CHAT_ROOM_NOT_FOUND));
     }
 
-    private Application findApplicationWithGathering(Long id) {
-        return applicationRepository.findByIdWithGathering(id)
+    private Application findApplicationForPendingStatusWithGathering(Long id) {
+        return applicationRepository.findByIdForPendingStatusWithGathering(id)
                 .orElseThrow(() -> new BusinessException(NOT_FOUND_APPLICATION));
     }
 
@@ -81,6 +88,6 @@ public class ApplicationCommandService {
 
     private User findUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(User_NOT_FOUND));
     }
 }

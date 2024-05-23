@@ -46,4 +46,8 @@ public class Application {
     public void approve() {
         this.status = ApplicationStatus.APPROVED;
     }
+
+    public void reject() {
+        this.status = ApplicationStatus.REJECTED;
+    }
 }
