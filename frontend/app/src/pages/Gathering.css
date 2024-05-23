@@ -1,7 +1,7 @@
 .gathering {
   display: flex;
   flex-direction: column;
-  height: 600px; /* 높이 조정 */
+  height: 100%; /* 높이 조정 */
   background: linear-gradient(to right, #FFB6C1, #FFFFFF);
   border-radius: 20px;
   box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 20px 0px;
