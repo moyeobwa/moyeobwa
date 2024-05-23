@@ -14,6 +14,11 @@
   
 .gathering_list ul li {
     padding: 10px;
+    cursor: pointer;
+}
+.gathering_list ul li:hover {
+    padding: 10px;
+    color: rgb(246, 113, 120);
 }
   
 .gathering_list ul li a {
