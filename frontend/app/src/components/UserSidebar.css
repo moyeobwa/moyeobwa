@@ -1,0 +1,11 @@
+.sidebar {
+    width: 200px;
+    height: 100%;
+    left: 0;
+    background-color: #f1f1f3;
+    padding: 30px;
+}
+
+.Button {
+    font-size: 15px;
+}
