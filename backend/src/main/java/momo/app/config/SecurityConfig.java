@@ -57,12 +57,16 @@ public class SecurityConfig {
                                 SessionCreationPolicy.STATELESS)
                 )
                 .addFilterAfter(jwtAuthenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
-                        .successHandler(loginSuccessHandler)
-                        .failureHandler(loginFailureHandler)
-                );
+                .oauth2Login((oauth2) -> {
+                            oauth2.userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                    .userService(customOAuth2UserService))
+                                    .successHandler(loginSuccessHandler)
+                                    .failureHandler(loginFailureHandler);
+                            oauth2.authorizationEndpoint(authorizationEndpointConfig ->
+                                    authorizationEndpointConfig.baseUri("/api/oauth2/authorize"));
+                            oauth2.redirectionEndpoint(redirectionEndpointConfig ->
+                                    redirectionEndpointConfig.baseUri("/api/oauth2/callback/google"));
+                        });
 
         return http.build();
     }
