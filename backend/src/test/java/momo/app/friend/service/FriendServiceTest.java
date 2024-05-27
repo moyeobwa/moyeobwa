@@ -41,8 +41,8 @@ class FriendServiceTest {
 
     @BeforeEach
     void init() {
-        user1 = new User(1L, "socialId1", "User1", "user1", "user1@example.com", "image1", "refreshToken1", Role.GUEST, "active", "desc1", "interest1", new ArrayList<>());
-        user2 = new User(2L, "socialId2", "User2", "user2", "user2@example.com", "image2", "refreshToken2", Role.GUEST, "active", "desc2", "interest2", new ArrayList<>());
+        user1 = new User(1L, "socialId1", "User1", "user1", "user1@example.com", "image1", "refreshToken1", Role.GUEST, "active", "desc1", "interest1");
+        user2 = new User(2L, "socialId2", "User2", "user2", "user2@example.com", "image2", "refreshToken2", Role.GUEST, "active", "desc2", "interest2");
     }
 
     @Test
