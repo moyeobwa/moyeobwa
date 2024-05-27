@@ -8,7 +8,7 @@ const Login = () => {
         <div className="Login">
             <section className="login_section">
                 <h1>Login</h1>
-                <Link to={'/'}>
+                <Link to={'/api/oauth2/authorize/google'}>
                     <img className="google" src={google}/>
                 </Link>
             </section>
