@@ -1,0 +1,127 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  width: 400px;
+  height: 600px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease;
+}
+
+.modal-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.modal-tabs button {
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.modal-tabs button:hover {
+  color: rgb(246, 113, 120);
+}
+
+.modal-tabs .active {
+  color: rgb(246, 113, 120);
+  border-bottom: 3px solid rgb(246, 113, 120);
+}
+
+.modal-content {
+  padding: 10px;
+  height: 450px;
+  overflow-y: auto;
+}
+
+.friend-list ul {
+  list-style: none;
+  padding: 0px 20px;
+}
+
+.friend-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.friend-list li .friend-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.friend-list li .delete-button {
+  appearance: none;
+  background-color: rgb(246, 113, 120);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: background-color 0.3s;
+}
+
+.friend-list li .delete-button:hover {
+  background-color: rgb(255, 133, 140);
+}
+
+.friend-request-request {
+  display: flex;
+  align-items: center;
+}
+
+.friend-request-request .input-nickname {
+  min-height: 50px;
+  max-width: 150px;
+  padding: 0 1rem;
+  font-size: 15px;
+  border: 1px solid rgb(246, 113, 120);
+  border-radius: 6px 0 0 6px;
+  background-color: transparent;
+}
+
+.friend-request-request .request-button {
+  min-height: 50px;
+  padding: .5em 1em;
+  border: none;
+  border-radius: 0 6px 6px 0;
+  background-color: rgb(246, 113, 120);
+  border: 9px solid rgb(246, 113, 120);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.friend-request-request .request-button:hover {
+  background-color: rgb(255, 133, 140);
+  border-color: rgb(255, 133, 140);
+}
+
+.friend-request-request .input-nickname:focus, .input-nickname:focus-visible {
+  border-color: rgb(255, 133, 140);
+  outline: none;
+}
+
+.close-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
