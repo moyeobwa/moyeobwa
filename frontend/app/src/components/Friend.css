@@ -48,6 +48,12 @@
   padding: 10px;
   height: 450px;
   overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .friend-list ul {
@@ -86,6 +92,7 @@
 .friend-request-request {
   display: flex;
   align-items: center;
+  padding: 0 40px;
 }
 
 .friend-request-request .input-nickname {
@@ -118,6 +125,49 @@
 .friend-request-request .input-nickname:focus, .input-nickname:focus-visible {
   border-color: rgb(255, 133, 140);
   outline: none;
+}
+
+.friend-request-list {
+  padding: 0 15px;
+  margin-top: 30px;
+  border-top: 1px solid rgb(246, 113, 120);
+}
+
+.friend-request-list h3 {
+  font-size: 18px;
+}
+
+.friend-request-list ul {
+  list-style: none;
+  padding: 0px 10px;
+}
+
+.friend-request-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.friend-request-list li .friend-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.friend-request-list li .cancel-button {
+  appearance: none;
+  background-color: rgb(246, 113, 120);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: background-color 0.3s;
+}
+
+.friend-request-list li .cancel-button:hover {
+  background-color: rgb(255, 133, 140);
 }
 
 .close-button {

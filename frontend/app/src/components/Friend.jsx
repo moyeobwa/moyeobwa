@@ -30,22 +30,27 @@ const Friend = ({ isOpen, onRequestClose }) => {
   const [activeTab, setActiveTab] = useState('friendList');
   const [friends, setFriends] = useState(friendData);
   const [newFriend, setNewFriend] = useState('');
+  const [friendRequests, setFriendRequests] = useState([]);
 
   const handleAddFriend = (event) => {
     event.preventDefault();
     if (newFriend.trim()) {
-      const newFriendData = {
-        id: friends.length + 1,
+      const newFriendRequest = {
+        id: friendRequests.length + 1,
         userId: Math.floor(Math.random() * 10000),
         nickName: newFriend
       };
-      setFriends([...friends, newFriendData]);
+      setFriendRequests([...friendRequests, newFriendRequest]);
       setNewFriend('');
     }
   };
 
   const handleDeleteFriend = (id) => {
     setFriends(friends.filter(friend => friend.id !== id));
+  };
+
+  const handleCancelRequest = (id) => {
+    setFriendRequests(friendRequests.filter(request => request.id !== id));
   };
 
   const renderContent = () => {
@@ -65,7 +70,7 @@ const Friend = ({ isOpen, onRequestClose }) => {
     } else if (activeTab === 'friendRequest') {
       return (
         <div className="friend-request">
-          <form className="friend-request-request" onSubmit={handleAddFriend}>
+          <div className="friend-request-request">
             <input 
               type="text" 
               placeholder="친구 닉네임" 
@@ -73,8 +78,25 @@ const Friend = ({ isOpen, onRequestClose }) => {
               value={newFriend}
               onChange={(e) => setNewFriend(e.target.value)} 
             />
-            <button type="submit" className="request-button">친구 신청</button>
-          </form>
+            <button 
+              type="submit" 
+              className="request-button" 
+              onClick={handleAddFriend}
+            >
+              친구 신청
+            </button>
+          </div>
+          <div className="friend-request-list">
+            <h3>친구 신청 목록</h3>
+            <ul>
+              {friendRequests.map(request => (
+                <li key={request.id}>
+                  <span className="friend-name">{request.nickName}</span>
+                  <button onClick={() => handleCancelRequest(request.id)} className="cancel-button">취소</button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       );
     }
