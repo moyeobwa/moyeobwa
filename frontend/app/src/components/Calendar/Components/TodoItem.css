@@ -1,0 +1,40 @@
+.list-todoBox {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.list-titleBox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.list-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.list-title {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.list-btnBox {
+  display: flex;
+  align-items: center;
+  color: var(--color-pink);
+}
+
+.list-edit {
+  cursor: pointer;
+}
+
+.list-delete {
+  margin-left: 8px;
+  cursor: pointer;
+}
