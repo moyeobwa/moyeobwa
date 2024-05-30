@@ -51,6 +51,9 @@
   background-color: var(--color-light-gray);
   padding: 10px;
   outline: none;
+  width: 93%;
+  max-width: 95%;
+  max-height: 160px;
 }
 
 .add_time {
