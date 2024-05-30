@@ -1,8 +1,7 @@
-import React from 'react';
 import './ColorRadio.css'; 
 const ColorRadio = ({ color, handleColor, isTheme }) => {
   return (
-    <div className={`box ${isTheme ? 'theme' : ''}`}>
+    <div className={`color-box ${isTheme ? 'theme' : ''}`}>
       <div
         className={`pink color ${color === 'pink' ? 'selected' : ''} ${
           isTheme ? 'themeColor' : ''

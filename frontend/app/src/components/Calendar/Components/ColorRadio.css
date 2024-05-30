@@ -1,4 +1,4 @@
-.box {
+.color-box {
   display: flex;
 }
 
@@ -11,6 +11,7 @@
   height: 30px;
   border-radius: 50%;
   cursor: pointer;
+  
 }
 
 .themeColor {
