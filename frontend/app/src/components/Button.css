@@ -6,13 +6,15 @@
     border-radius: 20px;
     font-size: 16px;
     text-align: center;
+    padding: 5px 50px;
     flex-direction: column;
     color: white;
     margin: 10px;
-    padding:5px 50px;
     align-items: center;
 }
 
+.Button:hover {
+    background-color: rgb(255, 133, 140);
 
 .Button_BLACK {
     background-color: black;
