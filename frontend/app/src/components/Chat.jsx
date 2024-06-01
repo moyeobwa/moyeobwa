@@ -19,8 +19,8 @@ const Chat = () => {
       <div className="chat-messages">
         {messages.map((msg, index) => (
           <div key={index} className={`chat-message ${msg.user === 'You' ? 'chat-message-sent' : 'chat-message-received'}`}>
-            <p><strong>{msg.user}</strong> • {msg.time}</p>
-            <p>{msg.text}</p>
+            <p><strong>{msg.user}</strong> <span className='time'>{msg.time}</span></p>
+            <p className='text'>{msg.text}</p>
           </div>
         ))}
       </div>

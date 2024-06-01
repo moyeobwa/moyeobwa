@@ -16,7 +16,9 @@
   }
   
   .chat-message-sent {
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
   }
   
   .chat-message-received {
@@ -25,6 +27,27 @@
   
   .chat-message p {
     margin: 5px 0;
+  }
+  .chat-message p .time {
+    font-size: 13px;
+  }
+
+  .chat-message-received .text {
+    background-color: #dfdede;
+    padding:10px 15px;
+    border-radius: 20px;
+    max-width: 200px;
+    word-wrap: break-word;
+  }
+
+  
+  .chat-message-sent .text {
+    background-color: rgb(255, 187, 191);
+    padding:10px 15px;
+    border-radius: 20px;
+    max-width: 200px;
+    word-wrap: break-word;
+    
   }
   
   .chat-input {
