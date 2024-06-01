@@ -1,0 +1,40 @@
+.back {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgb(255, 242, 246);
+  background: linear-gradient(
+    0deg,
+    rgba(255, 242, 246, 1) 0%,
+    rgba(255, 182, 182, 1) 100%
+  );
+}
+
+.box {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+
+}
+
+.colorTheme {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  font-size: var(--font-medium);
+  color: var(--color-pink);
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.colorRadio {
+  position: absolute;
+  bottom: 12%;
+  right: 5%;
+}

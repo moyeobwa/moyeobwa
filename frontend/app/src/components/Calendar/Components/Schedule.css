@@ -1,0 +1,45 @@
+.schedule-container {
+  width: 30%;
+  background-color: var(--color-white);
+  border-left: 1px solid var(--color-light-pink);
+  padding: 16px;
+}
+
+.schedule-header {
+  margin-top: 8px;
+  background-color: var(--color-white);
+  color: var(--color-pink);
+}
+
+.schedule-title {
+  margin: 0;
+  font-weight: var(--weight-bold);
+  font-size: var(--font-regular);
+}
+
+.schedule-dateBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.schedule-date {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: var(--font-small);
+  background-color: var(--color-pink);
+  color: var(--color-white);
+  border-radius: 8px;
+  padding: 2px 8px;
+}
+
+.schedule-addBtn {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  color: var(--color-pink);
+}
