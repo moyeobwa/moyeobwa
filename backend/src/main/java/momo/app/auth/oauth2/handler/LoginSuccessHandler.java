@@ -49,7 +49,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             //첫 로그인인 경우 (role이 GUEST인 경우) 회원가입 실행
             if (user.getRole() == Role.GUEST) {
                 //클라이언트 페이지로 Redirect
-                response.sendRedirect("https://momo.moyeobwa-dev.shop/login/response");
+                response.sendRedirect("https://momo.moyeobwa-dev.shop");
 
                 //회원가입 후 role을 User로 변경
             } else {
