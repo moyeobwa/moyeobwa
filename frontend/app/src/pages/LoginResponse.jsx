@@ -14,7 +14,7 @@ const LoginResponse = () => {
 
     return (  
         <div className="LoginResponse">
-            Token : {token}
+            {/* Token : {token} */}
         </div>
     );
 }
