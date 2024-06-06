@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import Cookies from 'universal-cookie';
+import Cookies from 'js-cookie';
 
 const LoginResponse = () => {
-    const [cookieValue, setCookieValue] = useState('');
-    const cookies = new Cookies();
+  const getCookie = () => {
+    const token = Cookies.get('Authorization-refresh');
+    if (token) {
+      alert(token);
+    } else {
+      alert('No token found');
+    }
+  };
 
     useEffect(() => {
         const token = cookies.get('Authorization-refresh');
@@ -11,12 +17,11 @@ const LoginResponse = () => {
             setCookieValue(token);
         }
     }, [cookies]);
-
-    return (  
-        <div className="LoginResponse">
-            {/* Token : {token} */}
-        </div>
-    );
+  return (
+    <div>
+      <button onClick={getCookie}>Get Cookie</button>
+    </div>
+  );
 }
  
 export default LoginResponse;
