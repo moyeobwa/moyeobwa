@@ -1,5 +1,6 @@
-import './SignUp.css'
-import { useState } from "react"
+import './SignUp.css';
+import { useState } from "react";
+import axios from 'axios';
 import Button from '../components/Button';
 
 const SignUp = () => {
@@ -9,12 +10,36 @@ const SignUp = () => {
     const onChangeNickName = (e) => {
         setNickName(e.target.value);
     }
+
     const onChangeProfile = (e) => {
         setProfile(e.target.files[0]);
     }
 
+    const onSubmit = async () => {
+        const formData = new FormData();
+        formData.append('image', profile);
+        
+        const requestData = {
+            nickname: nickName
+        };
+        formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
 
-    return (  
+        try {
+            const response = await axios.post('http://localhost:8080/api/v1/sign-up', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+            if (response.status === 200) {
+                alert("회원가입이 완료되었습니다.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("회원가입에 실패했습니다.");
+        }
+    }
+
+    return (
         <div className="SignUp">
             <section className="input_section">
                 <h1>Sign in</h1>
@@ -28,12 +53,10 @@ const SignUp = () => {
                     type="file"
                     name="profile"
                     onChange={onChangeProfile}
-                    value={profile}
-                    placeholder='닉네임을 입력해주세요'
-
                 />
                 <Button
                     text={"회원가입"}
+                    onClick={onSubmit}
                 />
             </section>
             <section className="intro_section">
@@ -42,9 +65,8 @@ const SignUp = () => {
                     다른 사람들과 취미를 함께 <br/>공유해보세요!
                 </p>
             </section>
-
         </div>
     );
 }
- 
+
 export default SignUp;
