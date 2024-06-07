@@ -1,13 +1,13 @@
 import './SignUp.css';
 import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Button from '../components/Button';
 
 const SignUp = () => {
     const [nickName, setNickName] = useState("");
     const [profile, setProfile] = useState(null);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const onChangeNickName = (e) => {
         setNickName(e.target.value);
@@ -34,7 +34,7 @@ const SignUp = () => {
             });
             if (response.status === 200) {
                 alert("회원가입이 완료되었습니다.");
-                history.push('/'); // 회원가입 성공 후 홈으로 이동
+                navigate('/'); // 회원가입 성공 후 홈으로 이동
             }
         } catch (error) {
             console.error(error);
