@@ -30,12 +30,20 @@ public class Vote {
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
 
+    @Column(nullable = false)
+    private Long creatorId;
+
     private VoteStatus status;
 
     @Builder
-    public Vote(String title, Gathering gathering) {
+    public Vote(
+            String title,
+            Gathering gathering,
+            Long creatorId
+    ) {
         this.title = title;
         this.gathering = gathering;
+        this.creatorId = creatorId;
         this.status = VoteStatus.PROGRESS;
     }
 

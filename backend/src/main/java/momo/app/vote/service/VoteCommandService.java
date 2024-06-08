@@ -41,6 +41,7 @@ public class VoteCommandService {
         Vote vote = Vote.builder()
                 .gathering(gathering)
                 .title(request.title())
+                .creatorId(authUser.getId())
                 .build();
         voteRepository.save(vote);
         optionNames.stream()
@@ -49,6 +50,13 @@ public class VoteCommandService {
                             .vote(vote)
                             .build()));
         return vote.getId();
+    }
+
+    public void vote(Long voteId, VoteRequest request, AuthUser authUser) {
+        Vote vote = findVote(voteId);
+        Option option = findOption(request);
+        validateCanVote(vote, authUser, request);
+        option.vote();
     }
 
     private void validateCanCreateVote(
@@ -64,13 +72,6 @@ public class VoteCommandService {
         if (optionNames.size() < MIN_NUMBER_OF_OPTIONS) {
             throw new BusinessException(TOO_FEW_OPTIONS);
         }
-    }
-
-    public void vote(Long voteId, VoteRequest request, AuthUser authUser) {
-        Vote vote = findVote(voteId);
-        Option option = findOption(request);
-        validateCanVote(vote, authUser, request);
-        option.vote();
     }
 
     private void validateCanVote(
