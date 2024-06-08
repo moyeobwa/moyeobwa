@@ -30,9 +30,19 @@ public class Vote {
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
 
+    private VoteStatus status;
+
     @Builder
     public Vote(String title, Gathering gathering) {
         this.title = title;
         this.gathering = gathering;
+        this.status = VoteStatus.PROGRESS;
+    }
+
+    public boolean isEnd() {
+        if (status.equals(VoteStatus.END)) {
+            return true;
+        }
+        return false;
     }
 }

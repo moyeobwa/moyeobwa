@@ -47,6 +47,9 @@ public class Gathering extends BaseTime {
     @OneToMany(mappedBy = "gathering")
     private List<GatheringTag> gatheringTags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "gathering")
+    private List<GatheringMember> gatheringMembers = new ArrayList<>();
+
     @Builder
     public Gathering(
             GatheringInfo gatheringInfo,
