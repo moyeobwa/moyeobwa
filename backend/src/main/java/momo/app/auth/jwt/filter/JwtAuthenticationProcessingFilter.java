@@ -45,25 +45,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().equals(NO_CHECK_URL)) { // '/login'으으로 요청이 들어오면 다음 필터를 호출
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String refreshToken = jwtExtractService.extractRefreshToken(request) //사용자 요청 header에서 refresh 토큰 추출
-                .filter(jwtCreateAndUpdateService::isTokenValid) //토큰 유효성 검사
-                .orElse(null); //토큰이 없거나 유효하지 않으면 null 반환
-
-        // refresh토큰이 사용자 header에 존재, access 토큰이 없어서 refresh 토큰을 요청한 경우
-        if (refreshToken != null) {
-            checkRefreshTokenAndReIssueAccessToken(response, refreshToken); //refresh 토큰이 DB의 refresh토큰과 일치하는 경우 access 토큰 재발급
-            return;
-        }
-
-        // refresh토큰이 사용자 header에 존재 X, access 토큰이 있는지, 유효한지 검사
-        if (refreshToken == null) {
-            checkAccessTokenAndAuthentication(request, response, filterChain);
-        }
+        checkAccessTokenAndAuthentication(request, response, filterChain);
     }
 
     //refresh 토큰으로 DB에서 유저를 찾고, 유저가 있다면 access, refresh 토큰 재발급 후 DB 업데이트
