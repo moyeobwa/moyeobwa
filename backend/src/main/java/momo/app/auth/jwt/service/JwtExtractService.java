@@ -41,26 +41,18 @@ public class JwtExtractService {
 
     //클라이언트 요청으로 refresh 토큰 header에서 추출
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        log.info("request: {}", request.toString());
         Cookie[] cookies = request.getCookies();
-        log.info("cookies : {}", cookies);
         if (cookies == null) {
             return Optional.empty();
         }
         for (Cookie cookie : cookies) {
-            if(refreshHeader.equals(cookie.getName())) {
+            if (refreshHeader.equals(cookie.getName())) {
                 return Optional.ofNullable(cookie.getValue());
             }
         }
-//        return Arrays.stream(request.getCookies())
-//                .filter(cookie -> refreshHeader.equals(cookie.getName()))
-//                .map(Cookie::getValue)
-//                .findFirst();
-//        return Optional.ofNullable(request.getHeader(refreshHeader)) // 헤더의 refreshHeader의 값 가져옴
-//                .filter(refreshToken -> refreshToken.startsWith(BEARER)) //Bearer 로 시작하면 통과
-//                .map(refreshToken -> refreshToken.replace(BEARER, "")); //'Bearer '부분을 삭제해 순수 토큰만 가져옴
         return Optional.empty();
     }
+
 
     //AccessToken에서 Email추출
     public Optional<String> extractEmail(String token) {
