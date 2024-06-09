@@ -3,7 +3,7 @@ import axios from 'axios';
 const LoginResponse = () => {
   const loginResponse = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/tokens');
+      const response = await axios.get('http://3.36.93.156:8080/api/v1/tokens');
       if (response.status === 200) {
         console.log(response.data);
       }
