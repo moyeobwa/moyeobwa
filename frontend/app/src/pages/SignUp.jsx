@@ -1,13 +1,32 @@
-import './SignUp.css';
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import Button from '../components/Button';
+import "./SignUp.css"
 
 const SignUp = () => {
     const [nickName, setNickName] = useState("");
     const [profile, setProfile] = useState(null);
+    const [token, setToken] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                const response = await axios.get('http://3.36.93.156:8080/api/v1/tokens', {
+                    withCredentials: true
+                });
+                if (response.status === 200) {
+                    setToken(response.data);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("토큰을 불러올 수 없습니다.");
+            }
+        }
+
+        fetchToken();
+    }, []);
 
     const onChangeNickName = (e) => {
         setNickName(e.target.value);
@@ -25,17 +44,16 @@ const SignUp = () => {
             nickname: nickName
         };
         formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
-
+        
         try {
-            // const response = await axios.post('http://3.36.93.156:8080/api/v1/sign-up', formData, {
-            const response = await axios.post('http://localhost:8080/api/v1/sign-up', formData, {
+            const response = await axios.post('http://3.36.93.156:8080/api/v1/sign-up', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
                 }
             });
             if (response.status === 200) {
-                alert("회원가입이 완료되었습니다.");
-                navigate('/'); // 회원가입 성공 후 홈으로 이동
+                navigate('/');
             }
         } catch (error) {
             console.error(error);
