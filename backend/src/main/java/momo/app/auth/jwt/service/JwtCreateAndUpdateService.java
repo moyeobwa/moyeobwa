@@ -44,12 +44,12 @@ public class JwtCreateAndUpdateService {
     }
 
     //refresh 토큰 생성
-    //대부분 access 토큰 생성과정과 동일하지만 클레임에 이메일 설정 X
-    public String createRefreshToken() {
+    public String createRefreshToken(String email) {
         Date now = new Date();
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
+                .withClaim(EMAIL_CLAIM, email) // 클레임을 이메일 값으로 설정
                 .sign(Algorithm.HMAC512((secretKey)));
     }
 

@@ -78,7 +78,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     //refresh 토큰 재발급 후 refresh 토큰 DB에 업데이트
     private String reIssueRefreshToken(User user) {
-        String reIssuedRefreshToken = jwtCreateAndUpdateService.createRefreshToken();
+        String reIssuedRefreshToken = jwtCreateAndUpdateService.createRefreshToken(user.getEmail());
         updateUserRefreshToken(user, reIssuedRefreshToken);
         return reIssuedRefreshToken;
     }

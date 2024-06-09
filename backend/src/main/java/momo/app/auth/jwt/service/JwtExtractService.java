@@ -41,7 +41,9 @@ public class JwtExtractService {
 
     //클라이언트 요청으로 refresh 토큰 header에서 추출
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
+        log.info("request: {}", request.toString());
         Cookie[] cookies = request.getCookies();
+        log.info("cookies : {}", cookies);
         if (cookies == null) {
             return Optional.empty();
         }
@@ -61,16 +63,16 @@ public class JwtExtractService {
     }
 
     //AccessToken에서 Email추출
-    public Optional<String> extractEmail(String accessToken) {
+    public Optional<String> extractEmail(String token) {
         try {
             //require을 통해 secretKey를 사용하여 HMAC512알고리즘으로 토큰 유효성 검사 설정
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                     .build() // 반환된 빌더로 JWT verifier 생성
-                    .verify(accessToken) //access토큰을 검증하고 유효하지 않으면 예외 발생
+                    .verify(token) //access토큰을 검증하고 유효하지 않으면 예외 발생
                     .getClaim(EMAIL_CLAIM) // 이메일 가져옴
                     .asString()); //String 형식으로 가져옴
         } catch (Exception e) {
-            log.error("Access Token이 유효하지 않습니다.");
+            log.error("Token이 유효하지 않습니다.");
             return Optional.empty(); //빈 Optional객체 반환
         }
     }
