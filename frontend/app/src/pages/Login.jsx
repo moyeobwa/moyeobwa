@@ -8,7 +8,7 @@ const Login = () => {
         <div className="Login">
             <section className="login_section">
                 <h1>Login</h1>
-                <a href="https://momo.moyeobwa-dev.shop/api/oauth2/authorize/google">
+                <a href="http://3.36.93.156:8080/api/oauth2/authorize/google">
                     <img className="google" src={google} alt="Google" />
                 </a>
             </section>
