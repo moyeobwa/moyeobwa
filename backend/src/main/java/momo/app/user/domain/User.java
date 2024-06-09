@@ -29,6 +29,7 @@ public class User extends BaseTime {
 
     private String imageUrl;
 
+    @Column(length = 512)
     private String refreshToken;
 
     // 최초 로그인 구분, GUEST, USER

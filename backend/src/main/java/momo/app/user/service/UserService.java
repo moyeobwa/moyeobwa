@@ -34,10 +34,10 @@ public class UserService {
             UserSignupRequest userSignupRequest,
             HttpServletResponse response,
             AuthUser authUser) {
-
+        log.info("여기1");
         User user = findUser(authUser);
         String accessToken = jwtCreateAndUpdateService.createAccessToken(user.getEmail());
-        String refreshToken = jwtCreateAndUpdateService.createRefreshToken();
+        String refreshToken = jwtCreateAndUpdateService.createRefreshToken(user.getEmail());
         jwtSendService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         user.authorizeUser();
         user.updateRefreshToken(refreshToken);
