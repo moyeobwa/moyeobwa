@@ -27,7 +27,8 @@ const SignUp = () => {
         formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
 
         try {
-            const response = await axios.post('http://3.36.93.156:8080/api/v1/sign-up', formData, {
+            // const response = await axios.post('http://3.36.93.156:8080/api/v1/sign-up', formData, {
+            const response = await axios.post('http://localhost:8080/api/v1/sign-up', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
