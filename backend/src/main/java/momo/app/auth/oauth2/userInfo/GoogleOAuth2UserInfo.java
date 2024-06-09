@@ -17,4 +17,6 @@ public class GoogleOAuth2UserInfo {
     public String getName() {
         return (String) attributes.get("name");
     }
+
+    public String getEmail() { return (String) attributes.get("email");}
 }
