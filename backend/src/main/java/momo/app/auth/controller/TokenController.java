@@ -26,11 +26,9 @@ public class TokenController {
     public ResponseEntity<String> createToken(HttpServletRequest request) {
         String refreshToken = jwtExtractService.extractRefreshToken(request)
                 .orElse(null);
-        log.info("refreshToken : {}", refreshToken);
         String email = jwtExtractService.extractEmail(refreshToken)
                         .orElse(null);
-        log.info("email : {}", email);
         String token = jwtCreateAndUpdateService.createAccessToken(email);
-        return ResponseEntity.ok(token); 
+        return ResponseEntity.ok(token);
     }
 }
