@@ -31,6 +31,6 @@ public class TokenController {
                         .orElse(null);
         log.info("email : {}", email);
         String token = jwtCreateAndUpdateService.createAccessToken(email);
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(token); 
     }
 }
