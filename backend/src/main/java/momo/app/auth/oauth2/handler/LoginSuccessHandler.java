@@ -45,18 +45,14 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             jwtSendService.sendAccessAndRefreshToken(response, "Bearer " + accessToken, refreshToken);
             jwtCreateAndUpdateService.updateRefreshToken(user.getEmail(), refreshToken);
 
-
-            //첫 로그인인 경우 (role이 GUEST인 경우) 회원가입 실행
-            if (user.getRole() == Role.GUEST) {
-                //클라이언트 페이지로 Redirect
-//                response.sendRedirect("https://momo.moyeobwa-dev.shop/sign-up");
-                response.sendRedirect("http://localhost:5173/login/response");
-
-                //회원가입 후 role을 User로 변경
+            if (user.getRole() == Role.USER) {
+                loginSuccess(user, refreshToken);
+                response.sendRedirect("https://momo.moyeobwa-dev.shop/");
             } else {
-                loginSuccess(user, refreshToken); //role이 USER인 경우 로그인 실행
-                response.sendRedirect("https://momo.moyeobwa-dev.shop");
+                response.sendRedirect("https://momo.moyeobwa-dev.shop/sign-up");
             }
+
+
         } catch (Exception e) {
             throw e;
         }
