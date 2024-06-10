@@ -53,4 +53,8 @@ public class Vote {
         }
         return false;
     }
+
+    public void terminate() {
+        status = VoteStatus.END;
+    }
 }
