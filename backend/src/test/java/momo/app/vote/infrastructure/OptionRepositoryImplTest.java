@@ -2,6 +2,7 @@ package momo.app.vote.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import momo.app.DatabaseCleanup;
 import momo.app.gathering.domain.Category;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringInfo;
@@ -34,6 +35,9 @@ class OptionRepositoryImplTest {
     @Autowired
     GatheringRepository gatheringRepository;
 
+    @Autowired
+    DatabaseCleanup databaseCleanup;
+
     User user;
 
     Gathering gathering;
@@ -48,6 +52,7 @@ class OptionRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
+        databaseCleanup.execute();
         user = userRepository.save(User.builder()
                 .email("email")
                 .nickname("nickname")
