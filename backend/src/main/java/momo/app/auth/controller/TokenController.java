@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import momo.app.auth.dto.AuthUser;
+import momo.app.auth.exception.TokenErrorCode;
 import momo.app.auth.jwt.service.JwtCreateAndUpdateService;
 import momo.app.auth.jwt.service.JwtExtractService;
+import momo.app.common.error.exception.BusinessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +27,13 @@ public class TokenController {
     @GetMapping
     public ResponseEntity<String> createToken(HttpServletRequest request) {
         String refreshToken = jwtExtractService.extractRefreshToken(request)
-                .orElse(null);
+                .orElseThrow(() -> new BusinessException(TokenErrorCode.TOKEN_NOT_FOUND));
+
         String email = jwtExtractService.extractEmail(refreshToken)
-                        .orElse(null);
+                .orElseThrow(() -> new BusinessException(TokenErrorCode.EMAIL_NOT_FOUND));
+
         String token = jwtCreateAndUpdateService.createAccessToken(email);
+
         return ResponseEntity.ok(token);
     }
 }
