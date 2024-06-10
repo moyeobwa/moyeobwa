@@ -11,11 +11,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import momo.app.auth.jwt.service.JwtCreateAndUpdateService;
+import momo.app.user.domain.Role;
+import momo.app.user.domain.User;
+import momo.app.user.domain.UserRepository;
 import momo.app.vote.dto.VoteCreateRequest;
 import momo.app.vote.dto.VoteRequest;
 import momo.app.vote.dto.VoteResponse;
 import momo.app.vote.service.VoteCommandService;
 import momo.app.vote.service.VoteQueryService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -46,7 +51,28 @@ class VoteControllerTest {
     ObjectMapper objectMapper;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     MockMvc mockMvc;
+
+    User user;
+
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(User.builder()
+                .email("user")
+                .nickname("user")
+                .role(Role.USER)
+                .socialId("user")
+                .build());
+    }
+
+    @AfterEach
+    void after() {
+        userRepository.delete(user);
+    }
+
 
     @Test
     void 투표를_생성한다() throws Exception {
@@ -56,7 +82,7 @@ class VoteControllerTest {
         given(voteCommandService.create(any(), any())).willReturn(voteId);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/votes")
-                .header(AUTHORIZATION, BEARER + jwtCreateAndUpdateService.createAccessToken("user"))
+                .header(AUTHORIZATION, BEARER + jwtCreateAndUpdateService.createAccessToken(user.getEmail()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -69,7 +95,7 @@ class VoteControllerTest {
         doNothing().when(voteCommandService).vote(any(), any(), any());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/votes/1/vote")
-                .header(AUTHORIZATION, BEARER + jwtCreateAndUpdateService.createAccessToken("user"))
+                .header(AUTHORIZATION, BEARER + jwtCreateAndUpdateService.createAccessToken(user.getEmail()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -87,7 +113,7 @@ class VoteControllerTest {
         given(voteQueryService.findAll(any(), any())).willReturn(response);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/votes/1")
-                .header(AUTHORIZATION, BEARER + jwtCreateAndUpdateService.createAccessToken("user")))
+                .header(AUTHORIZATION, BEARER + jwtCreateAndUpdateService.createAccessToken(user.getEmail())))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$[0].id").value(3))
                 .andExpect(jsonPath("$[1].id").value(2))
