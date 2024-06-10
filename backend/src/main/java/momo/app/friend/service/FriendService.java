@@ -98,7 +98,7 @@ public class FriendService {
 
     private User findUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(UserErrorCode.User_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
     }
 
     private Friend findFriend(Long id) {
