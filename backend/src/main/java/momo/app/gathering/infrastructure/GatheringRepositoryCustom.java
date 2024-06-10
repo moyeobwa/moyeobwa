@@ -2,5 +2,5 @@ package momo.app.gathering.infrastructure;
 
 public interface GatheringRepositoryCustom {
 
-    boolean existsByGatheringIdAndUserId(Long gatheringId, Long userId);
+    boolean checkExistsByGatheringIdAndUserId(Long gatheringId, Long userId);
 }

@@ -18,7 +18,7 @@ public class ChatMessageRepositoryImpl implements ChatMessageRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public SliceResponse<ChatMessageResponse> findByChatRoomIdOrderByDesc(
+    public SliceResponse<ChatMessageResponse> findByChatRoomIdOrderByIdDesc(
             int pageSize,
             String cursor,
             Long id

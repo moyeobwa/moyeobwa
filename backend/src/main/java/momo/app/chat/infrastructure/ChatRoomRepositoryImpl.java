@@ -10,14 +10,14 @@ import lombok.RequiredArgsConstructor;
 import momo.app.chat.domain.chatroom.ChatRoom;
 import org.springframework.stereotype.Repository;
 
-@Repository
 @RequiredArgsConstructor
+@Repository
 public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public boolean existsBySenderIdAndChatRoomId(Long userId, Long chatRoomId) {
+    public boolean checkExistsBySenderIdAndChatRoomId(Long userId, Long chatRoomId) {
         ChatRoom result = jpaQueryFactory.selectFrom(chatRoom)
                 .join(chatRoom.chatRoomUsers, chatRoomUser)
                 .join(chatRoomUser.user, user)

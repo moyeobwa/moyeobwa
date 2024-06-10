@@ -2,5 +2,5 @@ package momo.app.chat.infrastructure;
 
 public interface ChatRoomRepositoryCustom {
 
-    boolean existsBySenderIdAndChatRoomId(Long userId, Long chatRoomId);
+    boolean checkExistsBySenderIdAndChatRoomId(Long senderId, Long chatRoomId);
 }

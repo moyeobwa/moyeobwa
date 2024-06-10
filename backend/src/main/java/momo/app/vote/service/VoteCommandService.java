@@ -38,12 +38,11 @@ public class VoteCommandService {
         List<String> optionNames = request.optionNames();
         validateCanCreateVote(optionNames, request, authUser);
 
-        Vote vote = Vote.builder()
+        Vote vote = voteRepository.save(Vote.builder()
                 .gathering(gathering)
                 .title(request.title())
                 .creatorId(authUser.getId())
-                .build();
-        voteRepository.save(vote);
+                .build());
         optionNames.stream()
                 .forEach((name) -> optionRepository.save(Option.builder()
                             .content(name)
@@ -96,7 +95,7 @@ public class VoteCommandService {
     }
 
     private void validateOptionInVote(Long optionId, Long voteId) {
-        optionRepository.existsByIdAndVoteId(optionId, voteId);
+        optionRepository.checkExistsByIdAndVoteId(optionId, voteId);
     }
 
     private Vote findVote(Long voteId) {
@@ -105,7 +104,7 @@ public class VoteCommandService {
     }
 
     private void validateUserInGathering(Long gatheringId, AuthUser authUser) {
-        if (!gatheringRepository.existsByGatheringIdAndUserId(gatheringId, authUser.getId())) {
+        if (!gatheringRepository.checkExistsByGatheringIdAndUserId(gatheringId, authUser.getId())) {
             throw new BusinessException(USER_NOT_IN_GATHERING);
         }
     }

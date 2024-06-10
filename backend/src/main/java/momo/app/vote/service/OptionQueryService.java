@@ -36,7 +36,7 @@ public class OptionQueryService {
     }
 
     private void validateUserInGathering(AuthUser authUser, Vote vote) {
-        if (!gatheringRepository.existsByGatheringIdAndUserId(vote.getGathering().getId(), authUser.getId())) {
+        if (!gatheringRepository.checkExistsByGatheringIdAndUserId(vote.getGathering().getId(), authUser.getId())) {
             throw new BusinessException(USER_NOT_IN_GATHERING);
         }
     }

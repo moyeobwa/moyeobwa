@@ -33,7 +33,7 @@ public class VoteQueryService {
     }
 
     private void validateUserInGathering(AuthUser authUser, Long gatheringId) {
-        if (!gatheringRepository.existsByGatheringIdAndUserId(gatheringId, authUser.getId())) {
+        if (!gatheringRepository.checkExistsByGatheringIdAndUserId(gatheringId, authUser.getId())) {
             throw new BusinessException(GatheringErrorCode.USER_NOT_IN_GATHERING);
         }
     }

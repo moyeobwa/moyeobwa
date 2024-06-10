@@ -46,7 +46,7 @@ public class ChatMessageCommandService {
     }
 
     private void validateMemberInChatRoom(Long senderId, Long chatRoomId) {
-        if (!chatRoomRepository.existsBySenderIdAndChatRoomId(senderId, chatRoomId)) {
+        if (!chatRoomRepository.checkExistsBySenderIdAndChatRoomId(senderId, chatRoomId)) {
             throw new BusinessException(USER_NOT_IN_CHAT_ROOM);
         }
     }

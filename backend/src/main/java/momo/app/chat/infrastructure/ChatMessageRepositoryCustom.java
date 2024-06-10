@@ -5,5 +5,5 @@ import momo.app.common.dto.SliceResponse;
 
 public interface ChatMessageRepositoryCustom {
 
-    SliceResponse<ChatMessageResponse> findByChatRoomIdOrderByDesc(int pageSize, String cursor, Long id);
+    SliceResponse<ChatMessageResponse> findByChatRoomIdOrderByIdDesc(int pageSize, String cursor, Long id);
 }

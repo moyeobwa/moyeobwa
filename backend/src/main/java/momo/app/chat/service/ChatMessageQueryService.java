@@ -25,12 +25,12 @@ public class ChatMessageQueryService {
             int pageSize
     ) {
         validateUserInChatRoom(id, authUser);
-        return chatMessageRepository.findByChatRoomIdOrderByDesc(pageSize, cursor, id);
+        return chatMessageRepository.findByChatRoomIdOrderByIdDesc(pageSize, cursor, id);
     }
 
 
     private void validateUserInChatRoom(Long id, AuthUser authUser) {
-        if (!chatRoomRepository.existsBySenderIdAndChatRoomId(authUser.getId(), id)) {
+        if (!chatRoomRepository.checkExistsBySenderIdAndChatRoomId(authUser.getId(), id)) {
             throw new BusinessException(USER_NOT_IN_CHAT_ROOM);
         }
     }

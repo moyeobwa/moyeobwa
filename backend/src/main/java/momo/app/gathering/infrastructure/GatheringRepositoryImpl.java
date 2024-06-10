@@ -8,14 +8,14 @@ import lombok.RequiredArgsConstructor;
 import momo.app.gathering.domain.GatheringMember;
 import org.springframework.stereotype.Repository;
 
-@Repository
 @RequiredArgsConstructor
+@Repository
 public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public boolean existsByGatheringIdAndUserId(Long gatheringId, Long userId) {
+    public boolean checkExistsByGatheringIdAndUserId(Long gatheringId, Long userId) {
         GatheringMember result = jpaQueryFactory.select(gatheringMember)
                 .from(gathering)
                 .innerJoin(gathering.gatheringMembers, gatheringMember)
