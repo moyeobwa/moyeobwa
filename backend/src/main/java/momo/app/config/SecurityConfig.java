@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/sign-up").hasRole("GUEST")
                         .requestMatchers("/api/v1/gatherings/**").hasRole("USER")
                         .requestMatchers("/api/v1/applications/**").hasRole("USER")
+                        .requestMatchers("/api/v1/votes/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandlingConfigurer -> {
                     exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint);
