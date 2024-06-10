@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
+@Table(name = "users")
 public class User extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
