@@ -44,13 +44,14 @@ public class JwtSendService {
     }
 
     private ResponseCookie createCookie(String key, String value) {
+        // 쿠키 생성
         ResponseCookie cookie = ResponseCookie.from(key, value)
                 .maxAge(14*24*60*60)
                 .httpOnly(true)
                 .sameSite("None")
                 .secure(true)
                 .path("/")
-                .build(); 
+                .build();
 
         return cookie;
     }

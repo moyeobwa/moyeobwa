@@ -8,9 +8,9 @@ const Login = () => {
         <div className="Login">
             <section className="login_section">
                 <h1>Login</h1>
-                <Link to={'/api/oauth2/authorize/google'}>
-                    <img className="google" src={google}/>
-                </Link>
+                <a href="http://3.36.93.156:8080/api/oauth2/authorize/google">
+                    <img className="google" src={google} alt="Google" />
+                </a>
             </section>
             <section className="intro_section">
                 <h2>모여봐에 <br/>오신 것을<br/> 환영합니다!</h2>

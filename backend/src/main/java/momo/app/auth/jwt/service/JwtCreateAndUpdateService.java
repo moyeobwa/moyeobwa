@@ -5,8 +5,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import momo.app.common.error.exception.BusinessException;
 import momo.app.common.util.RedisUtil;
 import momo.app.user.domain.UserRepository;
+import momo.app.user.exception.UserErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -44,12 +46,12 @@ public class JwtCreateAndUpdateService {
     }
 
     //refresh 토큰 생성
-    //대부분 access 토큰 생성과정과 동일하지만 클레임에 이메일 설정 X
-    public String createRefreshToken() {
+    public String createRefreshToken(String email) {
         Date now = new Date();
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
+                .withClaim(EMAIL_CLAIM, email) // 클레임을 이메일 값으로 설정
                 .sign(Algorithm.HMAC512((secretKey)));
     }
 
@@ -58,7 +60,7 @@ public class JwtCreateAndUpdateService {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(
                         user -> user.updateRefreshToken(refreshToken), //회원이 존재하면 refresh 토큰 업데이트
-                        () -> new IllegalStateException("일치하는 회원이 없습니다.") //회원이 존재하지 않으면 exception 발생
+                        () -> new BusinessException(UserErrorCode.USER_NOT_FOUND) //회원이 존재하지 않으면 exception 발생
                 );
     }
 

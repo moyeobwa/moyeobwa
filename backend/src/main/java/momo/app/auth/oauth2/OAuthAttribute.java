@@ -31,7 +31,7 @@ public class OAuthAttribute {
     public User toEntity(GoogleOAuth2UserInfo userInfo) {
         return User.builder()
                 .socialId(userInfo.getId())
-                .email(UUID.randomUUID() + "@socialUser.com")
+                .email(userInfo.getEmail())
                 .name(userInfo.getName())
                 .role(Role.GUEST)
                 .build();

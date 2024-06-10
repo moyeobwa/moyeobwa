@@ -41,20 +41,18 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         try {
             CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal(); //소셜로부터 유저 정보 받아옴
             String accessToken = jwtCreateAndUpdateService.createAccessToken(user.getEmail()); // access 토큰 생성
-            String refreshToken = jwtCreateAndUpdateService.createRefreshToken();
+            String refreshToken = jwtCreateAndUpdateService.createRefreshToken(user.getEmail());
             jwtSendService.sendAccessAndRefreshToken(response, "Bearer " + accessToken, refreshToken);
             jwtCreateAndUpdateService.updateRefreshToken(user.getEmail(), refreshToken);
 
-
-            //첫 로그인인 경우 (role이 GUEST인 경우) 회원가입 실행
-            if (user.getRole() == Role.GUEST) {
-                //클라이언트 페이지로 Redirect
-                response.sendRedirect("https://momo.moyeobwa-dev.shop/login/response");
-
-                //회원가입 후 role을 User로 변경
+            if (user.getRole() == Role.USER) {
+                loginSuccess(user, refreshToken);
+                response.sendRedirect("https://momo.moyeobwa-dev.shop/");
             } else {
-                loginSuccess(user, refreshToken); //role이 USER인 경우 로그인 실행
+                response.sendRedirect("https://momo.moyeobwa-dev.shop/sign-up");
             }
+
+
         } catch (Exception e) {
             throw e;
         }

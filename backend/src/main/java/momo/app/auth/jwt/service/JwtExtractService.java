@@ -46,31 +46,25 @@ public class JwtExtractService {
             return Optional.empty();
         }
         for (Cookie cookie : cookies) {
-            if(refreshHeader.equals(cookie.getName())) {
+            if (refreshHeader.equals(cookie.getName())) {
                 return Optional.ofNullable(cookie.getValue());
             }
         }
-//        return Arrays.stream(request.getCookies())
-//                .filter(cookie -> refreshHeader.equals(cookie.getName()))
-//                .map(Cookie::getValue)
-//                .findFirst();
-//        return Optional.ofNullable(request.getHeader(refreshHeader)) // 헤더의 refreshHeader의 값 가져옴
-//                .filter(refreshToken -> refreshToken.startsWith(BEARER)) //Bearer 로 시작하면 통과
-//                .map(refreshToken -> refreshToken.replace(BEARER, "")); //'Bearer '부분을 삭제해 순수 토큰만 가져옴
         return Optional.empty();
     }
 
+
     //AccessToken에서 Email추출
-    public Optional<String> extractEmail(String accessToken) {
+    public Optional<String> extractEmail(String token) {
         try {
             //require을 통해 secretKey를 사용하여 HMAC512알고리즘으로 토큰 유효성 검사 설정
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                     .build() // 반환된 빌더로 JWT verifier 생성
-                    .verify(accessToken) //access토큰을 검증하고 유효하지 않으면 예외 발생
+                    .verify(token) //access토큰을 검증하고 유효하지 않으면 예외 발생
                     .getClaim(EMAIL_CLAIM) // 이메일 가져옴
                     .asString()); //String 형식으로 가져옴
         } catch (Exception e) {
-            log.error("Access Token이 유효하지 않습니다.");
+            log.error("Token이 유효하지 않습니다.");
             return Optional.empty(); //빈 Optional객체 반환
         }
     }
