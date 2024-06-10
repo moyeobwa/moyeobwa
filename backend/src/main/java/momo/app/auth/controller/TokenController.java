@@ -26,14 +26,13 @@ public class TokenController {
 
     @GetMapping
     public ResponseEntity<String> createToken(HttpServletRequest request) {
-        String refreshToken = jwtExtractService.extractRefreshToken(request)
-                .orElseThrow(() -> new BusinessException(TokenErrorCode.TOKEN_NOT_FOUND));
+        String email = jwtExtractService.extractEmail(
+                jwtExtractService.extractRefreshToken(request)
+                        .orElseThrow(() -> new BusinessException(TokenErrorCode.TOKEN_NOT_FOUND))
+        ).orElseThrow(() -> new BusinessException(TokenErrorCode.EMAIL_NOT_FOUND));
 
-        String email = jwtExtractService.extractEmail(refreshToken)
-                .orElseThrow(() -> new BusinessException(TokenErrorCode.EMAIL_NOT_FOUND));
+        jwtCreateAndUpdateService.updateRefreshToken(email, jwtCreateAndUpdateService.createRefreshToken(email));
 
-        String token = jwtCreateAndUpdateService.createAccessToken(email);
-
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(jwtCreateAndUpdateService.createAccessToken(email));
     }
 }
