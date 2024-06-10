@@ -5,8 +5,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import momo.app.common.error.exception.BusinessException;
 import momo.app.common.util.RedisUtil;
 import momo.app.user.domain.UserRepository;
+import momo.app.user.exception.UserErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +60,7 @@ public class JwtCreateAndUpdateService {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(
                         user -> user.updateRefreshToken(refreshToken), //회원이 존재하면 refresh 토큰 업데이트
-                        () -> new IllegalStateException("일치하는 회원이 없습니다.") //회원이 존재하지 않으면 exception 발생
+                        () -> new BusinessException(UserErrorCode.USER_NOT_FOUND) //회원이 존재하지 않으면 exception 발생
                 );
     }
 
