@@ -1,39 +1,125 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Client } from '@stomp/stompjs';
+import { Box, TextField, Button, Card, CardContent, List, ListItem, Grid } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import axios from 'axios';
 import './Chat.css';
 
-const Chat = () => {
-  const [messages, setMessages] = useState([
-    { user: 'user1', text: '퍼블리싱 너무 힘들어요.....', time: '10:30 AM' },
-    { user: 'user2', text: "GPT 도와줘!!", time: '10:32 AM' }
-  ]);
+const Chat = ({ gatheringId }) => {
+  const [client, setClient] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const senderId = 1; // 현재 사용자의 아이디
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/api/v1/chat-messages/gatherings/${gatheringId}`, {
+      headers: {
+        Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcyMzE3NzQ1NCwiZW1haWwiOiJhZG1pbkBtb3llb2J3YS5jb20ifQ.imODjEb3vsLoB77f_erhM5cpauVqRyJJAE3vmYbCh1HwMyqZhHmqlQq72Oonn3_tBJEGtGCgP6aC-CQSmjf8Og'
+      }
+    })
+      .then(response => {
+        setMessages(response.data.values || []);
+        console.log("Fetched messages successfully:", response.data);
+      })
+      .catch(error => {
+        console.error('Failed to fetch messages:', error);
+        setMessages([]); // API 호출 실패 시 빈 배열 설정
+      });
+
+    const stompClient = new Client({
+      brokerURL: "ws://localhost:8080/ws",
+      connectHeaders: {
+        Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcyMzE3NzQ1NCwiZW1haWwiOiJhZG1pbkBtb3llb2J3YS5jb20ifQ.imODjEb3vsLoB77f_erhM5cpauVqRyJJAE3vmYbCh1HwMyqZhHmqlQq72Oonn3_tBJEGtGCgP6aC-CQSmjf8Og'
+      },
+      debug: function (str) {
+        console.log(str);
+      },
+      onConnect: () => {
+        console.log('Connected!');
+        stompClient.subscribe(`/topic/chat-rooms/${gatheringId}`, function (message) {
+          const receivedMessage = JSON.parse(message.body);
+          setMessages(prevMessages => [...prevMessages, receivedMessage]);
+        });
+      },
+      onStompError: function (frame) {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      },
+      onWebSocketError: function (event) {
+        console.error('WebSocket error: ' + event);
+      },
+      onWebSocketClose: function (event) {
+        console.error('WebSocket close: ' + event);
+      },
+      onError: function (error) {
+        console.log('Error:', error);
+      },
+    });
+
+    stompClient.activate();
+    setClient(stompClient);
+    return () => {
+      stompClient.deactivate();
+    };
+  }, [gatheringId]);
 
   const handleSendMessage = () => {
-    const newMsg = { user: 'You', text: newMessage, time: new Date().toLocaleTimeString() };
-    setMessages([...messages, newMsg]);
-    setNewMessage('');
+    if (client && newMessage) {
+      const message = {
+        chatRoomId: gatheringId,
+        content: newMessage,
+        senderId: senderId,
+      };
+      client.publish({
+        destination: "/app/message",
+        body: JSON.stringify(message)
+      });
+      setNewMessage('');
+    }
   };
 
   return (
-    <div className="chat-section">
-      <div className="chat-messages">
-        {messages.map((msg, index) => (
-          <div key={index} className={`chat-message ${msg.user === 'You' ? 'chat-message-sent' : 'chat-message-received'}`}>
-            <p><strong>{msg.user}</strong> <span className='time'>{msg.time}</span></p>
-            <p className='text'>{msg.text}</p>
-          </div>
-        ))}
-      </div>
-      <div className="chat-input">
-        <input 
-          type="text" 
-          value={newMessage} 
-          onChange={(e) => setNewMessage(e.target.value)} 
-          placeholder="Type your message..." 
-        />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
-    </div>
+    <Box className="chat-section">
+      <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column', margin: 2 }}>
+        <CardContent sx={{ flex: 1, overflowY: 'auto', padding: 0 }}>
+          <List className="chat-messages">
+            {messages.map((msg, index) => (
+              <ListItem key={index} className={`chat-message ${msg.senderId === senderId ? 'chat-message-sent' : 'chat-message-received'}`}>
+                <Box className="text">
+                  {msg.content}
+                  <p className="time">{msg.senderName || "Unknown"}</p>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </CardContent>
+        <Box className="chat-input" sx={{ padding: 2 }}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={10}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="메시지를 입력하세요..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                sx={{ backgroundColor: 'white' }}
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <Button
+                fullWidth
+                variant="contained"
+                endIcon={<SendIcon />}
+                onClick={handleSendMessage}
+                sx={{ height: '100%', backgroundColor: 'rgb(246, 113, 120)', color: 'white', whiteSpace: 'nowrap' }}
+              >
+                보내기
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Card>
+    </Box>
   );
 };
 
