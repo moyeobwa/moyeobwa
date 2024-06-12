@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
+import PrivateRoute from './components/PrivateRoute';
 
 const Loading = <div>Loading....</div>
 const Home = lazy(() => import("./pages/Home"));
@@ -10,30 +11,62 @@ const NewGathering = lazy(() => import("./pages/NewGathering"));
 const LoginResponse = lazy(() => import("./pages/LoginResponse"));
 
 const router = createBrowserRouter([
-    {
-        path: "",
-        element: <Suspense fallback={Loading}><Home /></Suspense>
-    },
-    {
-        path: "/sign-up",
-        element: <Suspense fallback={Loading}><SignUp /></Suspense>
-    },
-    {
-        path: "/login",
-        element: <Suspense fallback={Loading}><Login /></Suspense>
-    },
-    {
-        path: "/gathering",
-        element: <Suspense fallback={Loading}><Gathering /></Suspense>
-    },
-    {
-        path: "/gathering/new",
-        element: <Suspense fallback={Loading}><NewGathering /></Suspense>
-    },
-    {
-        path: "/login/response",
-        element: <Suspense fallback={Loading}><LoginResponse /></Suspense>
-    }
+  {
+    path: "/",
+    element: (
+      <Suspense fallback={Loading}>
+        <PrivateRoute>
+          <Home />
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/sign-up",
+    element: (
+      <Suspense fallback={Loading}>
+        <PrivateRoute>
+          <SignUp />
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/login",
+    element: (
+      <Suspense fallback={Loading}>
+        <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/gathering",
+    element: (
+      <Suspense fallback={Loading}>
+        <PrivateRoute>
+          <Gathering />
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/gathering/new",
+    element: (
+      <Suspense fallback={Loading}>
+        <PrivateRoute>
+          <NewGathering />
+        </PrivateRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/login-response",
+    element: (
+      <Suspense fallback={Loading}>
+        <LoginResponse />
+      </Suspense>
+    ),
+  },
 ]);
 
 export default router;
