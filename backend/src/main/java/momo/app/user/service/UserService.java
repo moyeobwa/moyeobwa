@@ -8,11 +8,14 @@ import momo.app.auth.dto.AuthUser;
 import momo.app.auth.jwt.service.JwtCreateAndUpdateService;
 import momo.app.auth.jwt.service.JwtExtractService;
 import momo.app.auth.jwt.service.JwtSendService;
+import momo.app.common.error.exception.BusinessException;
 import momo.app.common.util.RedisUtil;
 import momo.app.image.S3Service;
+import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
 import momo.app.user.dto.request.UserSignupRequest;
+import momo.app.user.exception.UserErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +47,6 @@ public class UserService {
         user.signUp(userSignupRequest.nickname(), imageUrl);
     }
 
-    private User findUser(AuthUser authUser) {
-        return userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
-    }
-
     public void logout(String accessToken, AuthUser authUser) {
         User user = findUser(authUser);
         Long expiration = jwtCreateAndUpdateService.getRemainingExpirationTime(accessToken);
@@ -58,5 +56,15 @@ public class UserService {
         }
 
         user.logout();
+    }
+
+    public Role getRole(AuthUser authUser) {
+        User user = findUser(authUser);
+        return user.getRole();
+    }
+
+    private User findUser(AuthUser authUser) {
+        return userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
     }
 }
