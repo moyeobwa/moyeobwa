@@ -107,13 +107,18 @@ const Chat = ({ gatheringId }) => {
             </Grid>
             <Grid item xs={2}>
               <Button
+                className="send-button"
                 fullWidth
                 variant="contained"
                 endIcon={<SendIcon />}
                 onClick={handleSendMessage}
-                sx={{ height: '100%', backgroundColor: 'rgb(246, 113, 120)', color: 'white', whiteSpace: 'nowrap' }}
+                sx={{ 
+                  height: '100%', 
+                  backgroundColor: 'rgb(246, 113, 120)', 
+                  color: 'white', 
+                  whiteSpace: 'nowrap',
+                }}
               >
-                보내기
               </Button>
             </Grid>
           </Grid>
