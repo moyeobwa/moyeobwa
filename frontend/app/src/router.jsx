@@ -1,8 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
+import "./router.css"
 import PrivateRoute from './components/PrivateRoute';
 
-const Loading = <div>Loading....</div>
+const Loading = (
+    <div className="loader-wrapper">
+      <div className="loader"></div>
+    </div>
+  );
 const Home = lazy(() => import("./pages/Home"));
 const SignUp = lazy(() => import("./pages/SignUp"));
 const Login = lazy(() => import("./pages/Login"));
