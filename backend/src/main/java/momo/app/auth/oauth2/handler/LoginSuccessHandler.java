@@ -44,7 +44,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             String refreshToken = jwtCreateAndUpdateService.createRefreshToken(user.getEmail());
             jwtSendService.sendAccessAndRefreshToken(response, "Bearer " + accessToken, refreshToken);
             jwtCreateAndUpdateService.updateRefreshToken(user.getEmail(), refreshToken);
-            response.sendRedirect("http://localhost:5173/login-response");
+            response.sendRedirect("https://momo.moyeobwa-dev.shop/login-response");
 
             if (user.getRole() == Role.USER) {
                 loginSuccess(user, refreshToken);
