@@ -9,6 +9,7 @@ import momo.app.chat.domain.chatmessage.ChatMessageRepository;
 import momo.app.chat.domain.chatroom.ChatRoom;
 import momo.app.chat.domain.chatroom.ChatRoomRepository;
 import momo.app.chat.dto.request.ChatMessageSendRequest;
+import momo.app.chat.dto.response.ChatMessageResponse;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
@@ -24,15 +25,21 @@ public class ChatMessageCommandService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
-    public void save(ChatMessageSendRequest request) {
+    public ChatMessageResponse save(ChatMessageSendRequest request) {
         ChatRoom chatRoom = findChatRoom(request.chatRoomId());
         validateMemberInChatRoom(request.senderId(), request.chatRoomId());
         User sender = findUser(request.senderId());
-        chatMessageRepository.save(ChatMessage.builder()
+        ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .user(sender)
                 .content(request.content())
                 .build());
+
+        return ChatMessageResponse.of(
+                chatMessage.getId(),
+                chatMessage.getContent(),
+                request.senderId(),
+                sender.getName());
     }
 
     private User findUser(Long id) {

@@ -1,6 +1,7 @@
 package momo.app.chat.service;
 
 import static momo.app.chat.exception.ChatErrorCode.USER_NOT_IN_CHAT_ROOM;
+import static momo.app.gathering.exception.GatheringErrorCode.GATHERING_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
@@ -9,6 +10,8 @@ import momo.app.chat.domain.chatroom.ChatRoomRepository;
 import momo.app.chat.dto.response.ChatMessageResponse;
 import momo.app.common.dto.SliceResponse;
 import momo.app.common.error.exception.BusinessException;
+import momo.app.gathering.domain.Gathering;
+import momo.app.gathering.domain.GatheringRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +20,7 @@ public class ChatMessageQueryService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final GatheringRepository gatheringRepository;
 
     public SliceResponse<ChatMessageResponse> findAllChatMessages(
             Long id,
@@ -24,8 +28,14 @@ public class ChatMessageQueryService {
             String cursor,
             int pageSize
     ) {
-        validateUserInChatRoom(id, authUser);
+        Gathering gathering = findGathering(id);
+        validateUserInChatRoom(gathering.getChatRoomId(), authUser);
         return chatMessageRepository.findByChatRoomIdOrderByIdDesc(pageSize, cursor, id);
+    }
+
+    private Gathering findGathering(Long id) {
+        return gatheringRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(GATHERING_NOT_FOUND));
     }
 
 
