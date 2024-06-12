@@ -27,11 +27,11 @@ public class ChatController {
 
     @MessageMapping("/message")
     public void sendMessage(@Payload ChatMessageSendRequest request) {
-        chatMessageCommandService.save(request);
-        sendingOperations.convertAndSend("/topic/chat-rooms/" + request.chatRoomId(), request);
+        ChatMessageResponse response = chatMessageCommandService.save(request);
+        sendingOperations.convertAndSend("/topic/chat-rooms/" + request.chatRoomId(), response);
     }
 
-    @GetMapping("/api/v1/chat-messages/chat-rooms/{id}")
+    @GetMapping("/api/v1/chat-messages/gatherings/{id}")
     public ResponseEntity<SliceResponse<ChatMessageResponse>> findMessages(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(required = false) String cursor,
