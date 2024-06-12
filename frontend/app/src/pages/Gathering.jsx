@@ -5,8 +5,10 @@ import Calendar from '../components/Calendar/Calendar';
 import Vote from '../components/Vote';
 import Header from '../components/Header';
 import './Gathering.css';
+import { useParams } from 'react-router-dom';
 
 const Gathering = () => {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState('Messages');
 
   return (
@@ -14,8 +16,8 @@ const Gathering = () => {
       <Header />
       <div className="main-content">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-        <div className="chat-section">
-          {activeTab === 'Messages' && <Chat />}
+        <div className="content-section">
+          {activeTab === 'Messages' && <Chat gatheringId={id} />}
           {activeTab === 'Calendar' && <Calendar />}
           {activeTab === 'Votes' && <Vote />}
         </div>

@@ -46,7 +46,7 @@ const gatheringData = [
 
 const Home = () => {
     const [sortType, setSortType] = useState("latest");
-
+    const navigate = useNavigate();
     const onChangeSortType = (e) => {
         setSortType(e.target.value);
     };
@@ -113,7 +113,9 @@ const Home = () => {
                         ref={scrollContainerRef}
                     >
                         {sortedGatheringData.map((gathering) => (
-                            <Card key={gathering.id} {...gathering}/>
+                            <div key={gathering.id} onClick={() => navigate(`/gathering/${gathering.id}`)}>
+                                <Card {...gathering} />
+                            </div>
                         ))}
                     </div>
                 </div>
