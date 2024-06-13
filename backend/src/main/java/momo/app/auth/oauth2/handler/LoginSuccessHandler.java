@@ -11,6 +11,7 @@ import momo.app.auth.oauth2.CustomOAuth2User;
 import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,9 @@ import java.util.Optional;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtCreateAndUpdateService jwtCreateAndUpdateService;
     private final JwtSendService jwtSendService;
-    private final UserRepository userRepository;
+
+    @Value("${app.redirect.url}")
+    private String redirectUrl;
 
     @Override
     @Transactional
@@ -44,7 +47,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             String refreshToken = jwtCreateAndUpdateService.createRefreshToken(user.getEmail());
             jwtSendService.sendAccessAndRefreshToken(response, "Bearer " + accessToken, refreshToken);
             jwtCreateAndUpdateService.updateRefreshToken(user.getEmail(), refreshToken);
-            response.sendRedirect("https://momo.moyeobwa-dev.shop/login-response");
+            response.sendRedirect(redirectUrl);
 
             if (user.getRole() == Role.USER) {
                 loginSuccess(user, refreshToken);

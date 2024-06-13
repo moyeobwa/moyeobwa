@@ -2,11 +2,13 @@ import './Login.css'
 import google from "./../assets/google.png"
 
 const Login = () => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
     return (  
         <div className="Login">
             <section className="login_section">
                 <h1>Login</h1>
-                <a href="http://3.36.93.156:8080/api/oauth2/authorize/google">
+                <a href={`${apiUrl}/api/oauth2/authorize/google`}>
                     <img className="google" src={google} alt="Google" />
                 </a>
             </section>
