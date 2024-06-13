@@ -1,7 +1,5 @@
 import './Login.css'
-import { useState } from "react"
 import google from "./../assets/google.png"
-import { Link } from 'react-router-dom'
 
 const Login = () => {
     return (  
@@ -22,5 +20,5 @@ const Login = () => {
         </div>
     );
 }
- 
+
 export default Login;

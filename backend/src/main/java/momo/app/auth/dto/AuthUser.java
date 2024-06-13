@@ -63,4 +63,6 @@ public class AuthUser implements UserDetails {
     public Long getId() {
         return id;
     }
+
+    public Role getRole() { return role; }
 }

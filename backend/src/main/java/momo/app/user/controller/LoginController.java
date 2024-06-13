@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import momo.app.auth.dto.AuthUser;
 import momo.app.auth.jwt.service.JwtExtractService;
+import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
 import momo.app.user.service.UserService;
 import momo.app.user.dto.request.UserSignupJsonRequest;
@@ -21,10 +22,17 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/login")
 public class LoginController {
     private final UserService userService;
     private final JwtExtractService jwtExtractService;
+
+    @GetMapping("/role")
+    public ResponseEntity<Role> getRole(
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        return ResponseEntity.ok(authUser.getRole());
+    }
 
     @PostMapping(value = "/sign-up",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
