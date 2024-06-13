@@ -2,7 +2,7 @@ FROM node:18 as build-stage
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm run build
+RUN VITE_API_BASE_URL=${VITE_API_BASE_URL} npm run build
 
 FROM nginx:stable-alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
