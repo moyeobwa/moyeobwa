@@ -58,11 +58,6 @@ public class UserService {
         user.logout();
     }
 
-    public Role getRole(AuthUser authUser) {
-        User user = findUser(authUser);
-        return user.getRole();
-    }
-
     private User findUser(AuthUser authUser) {
         return userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));

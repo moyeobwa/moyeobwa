@@ -29,10 +29,9 @@ public class LoginController {
 
     @GetMapping("/role")
     public ResponseEntity<Role> getRole(
-            @AuthenticationPrincipal AuthUser authUser,
-            HttpServletResponse response
+            @AuthenticationPrincipal AuthUser authUser
     ) {
-        return ResponseEntity.ok(userService.getRole(authUser));
+        return ResponseEntity.ok(authUser.getRole());
     }
 
     @PostMapping(value = "/sign-up",
