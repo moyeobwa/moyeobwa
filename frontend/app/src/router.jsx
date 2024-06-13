@@ -45,7 +45,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/gathering",
+    path: "/gathering/:id",
     element: (
       <Suspense fallback={Loading}>
         <PrivateRoute>
