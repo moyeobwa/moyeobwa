@@ -52,3 +52,8 @@ jobs:
         with:
           report_paths: backend/build/test-results/test/TEST-*.xml
 
+      - name: Set REACT_APP_API_BASE_URL
+        env:
+          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+        run: echo "REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}" >> $GITHUB_ENV
+
