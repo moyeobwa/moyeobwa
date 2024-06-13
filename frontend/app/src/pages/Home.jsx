@@ -1,52 +1,50 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
 import Header from '../components/Header';
 import UserSidebar from '../components/UserSidebar';
 import Card from '../components/Card';
-import Radio from '../components/Radio';
 import './Home.css';
 
 const gatheringData = [
     {
-        id:1,
+        id: 1,
         title: "사진 모임",
         describe: "사진 좋아하는 사람들 모이세요",
         memberCnt: 15,
         date: new Date(2024, 4, 23, 0, 0, 0).getTime()
     },
     {
-        id:2,
+        id: 2,
         title: "운동 모임",
         describe: "운동 좋아하는 사람들 모이세요",
         memberCnt: 20,
         date: new Date(2024, 4, 15, 0, 0, 0).getTime()
     },
     {
-        id:3,
+        id: 3,
         title: "독서 모임",
         describe: "독서 좋아하는 사람들 모이세요",
         memberCnt: 10,
         date: new Date(2024, 3, 12, 0, 0, 0).getTime()
     },
     {
-        id:4,
+        id: 4,
         title: "게임 모임",
         describe: "게임 좋아하는 사람들 모이세요",
         memberCnt: 5,
         date: new Date(2024, 4, 19, 0, 0, 0).getTime()
     },
     {
-        id:5,
+        id: 5,
         title: "등산 모임",
         describe: "등산 좋아하는 사람들 모이세요",
         memberCnt: 8,
         date: new Date(2024, 4, 25, 0, 0, 0).getTime()
     },
-]
+];
 
 const Home = () => {
     const [sortType, setSortType] = useState("latest");
-    const navigate = useNavigate();
+
     const onChangeSortType = (e) => {
         setSortType(e.target.value);
     };
@@ -59,16 +57,16 @@ const Home = () => {
     };
 
     const getSortedGatheringData = () => {
-        return gatheringData.toSorted((a, b) => {
-          if (sortType === "memberOrder") {
-            return Number(b.memberCnt) - Number(a.memberCnt);
-          } else if (sortType === "recency") {
-            return b.date - a.date;
-          } else {
-            return Number(a.id) - Number(b.id);
-          }
+        return gatheringData.sort((a, b) => {
+            if (sortType === "memberOrder") {
+                return Number(b.memberCnt) - Number(a.memberCnt);
+            } else if (sortType === "recency") {
+                return b.date - a.date;
+            } else {
+                return Number(a.id) - Number(b.id);
+            }
         });
-      };
+    };
 
     const sortedGatheringData = getSortedGatheringData();
 
@@ -86,22 +84,22 @@ const Home = () => {
                         <h2>이런 모임은 어떠세요?</h2>
                         <div className="radio-inputs">
                             <label className="radio">
-                            <input 
-                                type="radio" 
-                                name="radio" 
-                                value="memberOrder" 
-                                checked={sortType === "memberOrder"} 
-                                onChange={onChangeSortType} 
-                            />
-                            <span className="name">모임원 순</span>
+                                <input 
+                                    type="radio" 
+                                    name="radio" 
+                                    value="memberOrder" 
+                                    checked={sortType === "memberOrder"} 
+                                    onChange={onChangeSortType} 
+                                />
+                                <span className="name">모임원 순</span>
                             </label>
                             <label className="radio">
-                            <input 
-                                type="radio" 
-                                name="radio" 
-                                value="recency" 
-                                checked={sortType === "recency"} 
-                                onChange={onChangeSortType} 
+                                <input 
+                                    type="radio" 
+                                    name="radio" 
+                                    value="recency" 
+                                    checked={sortType === "recency"} 
+                                    onChange={onChangeSortType} 
                                 />
                                 <span className="name">최근 활동 순</span>
                             </label>
@@ -113,15 +111,14 @@ const Home = () => {
                         ref={scrollContainerRef}
                     >
                         {sortedGatheringData.map((gathering) => (
-                            <div key={gathering.id} onClick={() => navigate(`/gathering/${gathering.id}`)}>
+                            <a href={`/gathering/${gathering.id}`} key={gathering.id}>
                                 <Card {...gathering} />
-                            </div>
+                            </a>
                         ))}
                     </div>
                 </div>
             </div>
         </div>
-        
     );
 };
 
