@@ -47,7 +47,7 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         env:
-          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
         with:
           host: ${{ secrets.HOST }}
           username: ubuntu
