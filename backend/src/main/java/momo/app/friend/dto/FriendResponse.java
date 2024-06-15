@@ -9,10 +9,19 @@ public record FriendResponse(
         Long userId,
         String nickName
 ) {
-    public static FriendResponse from(Friend friend) {
-        return new FriendResponse(
-                friend.getId(),
-                friend.getToUser().getId(),
-                friend.getToUser().getNickname());
+    public static FriendResponse from(Friend friend, boolean isToUser) {
+        if (isToUser) {
+            return new FriendResponse(
+                    friend.getId(),
+                    friend.getToUser().getId(),
+                    friend.getToUser().getNickname()
+            );
+        } else {
+            return new FriendResponse(
+                    friend.getId(),
+                    friend.getFromUser().getId(),
+                    friend.getFromUser().getNickname()
+            );
+        }
     }
 }

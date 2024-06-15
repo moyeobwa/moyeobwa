@@ -1,6 +1,7 @@
 package momo.app.friend.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import momo.app.auth.dto.AuthUser;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.friend.domain.Friend;
@@ -18,8 +19,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static momo.app.friend.domain.QFriend.friend;
+
 @Service
 @Transactional
+@Slf4j
 @RequiredArgsConstructor
 public class FriendService {
     private final UserRepository userRepository;
@@ -39,7 +43,7 @@ public class FriendService {
         friendRepository.save(fromFriend);
     }
 
-    public void accept(Long id, AuthUser authUser) {
+    public FriendResponse accept(Long id, AuthUser authUser) {
         Friend requestFriend = findFriend(id);
         User fromUser = findUser(authUser.getId());
         User toUser = requestFriend.getFromUser();
@@ -51,6 +55,7 @@ public class FriendService {
                 .friendState(FriendState.ACCEPT)
                 .build();
         friendRepository.save(acceptFriend);
+        return FriendResponse.from(acceptFriend, true);
     }
 
     public void reject(Long id, AuthUser authUser) {
@@ -68,16 +73,19 @@ public class FriendService {
 
         friendRequest.validateFriendDelete(user, friendRequest);
 
-        friendRepository.delete(friendRequest);
+        friendRepository.deleteById(friendRequest.getId());
     }
 
     public void delete(Long id, AuthUser authUser) {
-        Friend friend = findFriend(id);
+        Friend fromFriend = findFriend(id);
         User user = findUser(authUser.getId());
 
-        friend.validateFriendDelete(user, friend);
+        fromFriend.validateFriendDelete(user, fromFriend);
 
-        friendRepository.deleteById(friend.getId());
+        Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
+                .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
+        log.info("fromFriend:{}, toFriend:{}", fromFriend.getId(), toFriend.getId());
+        friendRepository.deleteAllByIds(List.of(fromFriend.getId(), toFriend.getId()));
     }
 
     public List<FriendResponse> getFriends(AuthUser authUser) {
@@ -87,7 +95,7 @@ public class FriendService {
 
         return friends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(FriendResponse::from)
+                .map(friend -> FriendResponse.from(friend, true)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 
@@ -98,7 +106,7 @@ public class FriendService {
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(FriendResponse::from)
+                .map(friend -> FriendResponse.from(friend, true)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 
@@ -109,7 +117,7 @@ public class FriendService {
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(FriendResponse::from)
+                .map(friend -> FriendResponse.from(friend, false)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 

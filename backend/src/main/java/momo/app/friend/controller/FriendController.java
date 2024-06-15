@@ -29,14 +29,12 @@ public class FriendController {
     }
 
     @PostMapping("/accept/{id}")
-    ResponseEntity<Void> accept(
+    ResponseEntity<FriendResponse> accept(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        friendService.accept(id, authUser);
 
-        return ResponseEntity.ok()
-                .build();
+        return ResponseEntity.ok(friendService.accept(id, authUser));
     }
 
     @DeleteMapping("/reject/{id}")
