@@ -62,16 +62,22 @@ public class FriendService {
         friendRepository.delete(friendRequest);
     }
 
-    public void delete(Long id, AuthUser authUser) {
-        Friend fromFriend = findFriend(id);
+    public void cancel(Long id, AuthUser authUser) {
+        Friend friendRequest = findFriend(id);
         User user = findUser(authUser.getId());
 
-        fromFriend.validateFriendDelete(user, fromFriend);
+        friendRequest.validateFriendDelete(user, friendRequest);
 
-        Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
-                .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
+        friendRepository.delete(friendRequest);
+    }
 
-        friendRepository.deleteAllByIds(List.of(fromFriend.getId(), toFriend.getId()));
+    public void delete(Long id, AuthUser authUser) {
+        Friend friend = findFriend(id);
+        User user = findUser(authUser.getId());
+
+        friend.validateFriendDelete(user, friend);
+
+        friendRepository.deleteById(friend.getId());
     }
 
     public List<FriendResponse> getFriends(AuthUser authUser) {
@@ -85,7 +91,18 @@ public class FriendService {
                 .collect(Collectors.toList());
     }
 
-    public List<FriendResponse> getRequest(AuthUser authUser) {
+    public List<FriendResponse> getUserRequests(AuthUser authUser) {
+        User user = findUser(authUser.getId());
+
+        List<Friend> requestFriends = friendRepository.findAllByFromUserAndState(user, FriendState.WAITING);
+
+        return requestFriends.stream()
+                .sorted(Comparator.comparingLong(Friend::getId))
+                .map(FriendResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    public List<FriendResponse> getFriendRequests(AuthUser authUser) {
         User user = findUser(authUser.getId());
 
         List<Friend> requestFriends = friendRepository.findAllByToUserAndState(user, FriendState.WAITING);
@@ -107,6 +124,10 @@ public class FriendService {
     }
 
     private void validateFriendRequest(User fromUser, User toUser) {
+        if (fromUser.getId() == toUser.getId()) {
+            throw new BusinessException(FriendErrorCode.FRIEND_REQUEST_SELF);
+        }
+
         List<Friend> friends = friendRepository.findByTwoUser(fromUser, toUser);
 
         if (friends.size() == 1) {

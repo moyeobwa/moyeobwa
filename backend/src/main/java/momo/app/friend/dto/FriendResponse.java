@@ -13,6 +13,6 @@ public record FriendResponse(
         return new FriendResponse(
                 friend.getId(),
                 friend.getToUser().getId(),
-                friend.getToUser().getName());
+                friend.getToUser().getNickname());
     }
 }
