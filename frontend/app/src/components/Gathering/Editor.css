@@ -1,11 +1,19 @@
 .Editor {
   padding: 20px;
+  overflow: hidden;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 20px;
 }
 
 .section_wrapper {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  flex: 1;
+  overflow: auto;
 }
 
 .section_wrapper > section {
@@ -25,7 +33,8 @@ h4 {
   position: relative;
 }
 
-.section_wrapper > section > .input_wrapper input {
+.section_wrapper > section > .input_wrapper input,
+.section_wrapper > section > .input_wrapper select {
   width: calc(100% - 20px);
   padding: 10px;
   border: none;
@@ -61,8 +70,39 @@ h4 {
   margin-top: 20px; 
   display: flex;
   justify-content: space-between;
+  background: white;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  position: relative;
 }
 
 .button_section button:hover {
   background-color: #f0f0f0;
+}
+
+.tag_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tag_item {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.tag_item button {
+  margin-left: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: red;
+}
+
+.image_section {
+  flex-shrink: 0;
 }
