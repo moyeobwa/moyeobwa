@@ -23,7 +23,6 @@ import static momo.app.friend.domain.QFriend.friend;
 
 @Service
 @Transactional
-@Slf4j
 @RequiredArgsConstructor
 public class FriendService {
     private final UserRepository userRepository;
@@ -84,7 +83,7 @@ public class FriendService {
 
         Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
                 .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
-        log.info("fromFriend:{}, toFriend:{}", fromFriend.getId(), toFriend.getId());
+
         friendRepository.deleteAllByIds(List.of(fromFriend.getId(), toFriend.getId()));
     }
 
