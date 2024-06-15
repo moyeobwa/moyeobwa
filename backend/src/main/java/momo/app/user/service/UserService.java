@@ -15,11 +15,16 @@ import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
 import momo.app.user.dto.request.UserSignupRequest;
+import momo.app.user.dto.response.UserResponse;
 import momo.app.user.exception.UserErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+import static momo.app.user.domain.QUser.user;
 
 @Service
 @Slf4j
@@ -61,5 +66,12 @@ public class UserService {
     private User findUser(AuthUser authUser) {
         return userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+    }
+
+    public List<UserResponse> search(String nickname) {
+        List<User> users = userRepository.findByNicknameContaining(nickname);
+        return users.stream()
+                .map(user -> UserResponse.from(user))
+                .toList();
     }
 }
