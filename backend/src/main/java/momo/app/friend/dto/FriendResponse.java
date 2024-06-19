@@ -9,7 +9,7 @@ public record FriendResponse(
         Long userId,
         String nickName
 ) {
-    public static FriendResponse from(Friend friend, boolean isToUser) {
+    public static FriendResponse of(Friend friend, boolean isToUser) {
         if (isToUser) {
             return new FriendResponse(
                     friend.getId(),

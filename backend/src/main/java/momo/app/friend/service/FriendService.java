@@ -1,7 +1,6 @@
 package momo.app.friend.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import momo.app.auth.dto.AuthUser;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.friend.domain.Friend;
@@ -18,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static momo.app.friend.domain.QFriend.friend;
 
 @Service
 @Transactional
@@ -54,14 +51,14 @@ public class FriendService {
                 .friendState(FriendState.ACCEPT)
                 .build();
         friendRepository.save(acceptFriend);
-        return FriendResponse.from(acceptFriend, true);
+        return FriendResponse.of(acceptFriend, true);
     }
 
     public void reject(Long id, AuthUser authUser) {
         Friend friendRequest = findFriend(id);
         User user = findUser(authUser.getId());
 
-        friendRequest.validateFriendDelete(user, friendRequest);
+        friendRequest.validateUserInFriend(user);
 
         friendRepository.delete(friendRequest);
     }
@@ -70,7 +67,7 @@ public class FriendService {
         Friend friendRequest = findFriend(id);
         User user = findUser(authUser.getId());
 
-        friendRequest.validateFriendDelete(user, friendRequest);
+        friendRequest.validateUserInFriend(user);
 
         friendRepository.deleteById(friendRequest.getId());
     }
@@ -79,7 +76,7 @@ public class FriendService {
         Friend fromFriend = findFriend(id);
         User user = findUser(authUser.getId());
 
-        fromFriend.validateFriendDelete(user, fromFriend);
+        fromFriend.validateUserInFriend(user);
 
         Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
                 .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
@@ -94,7 +91,7 @@ public class FriendService {
 
         return friends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(friend -> FriendResponse.from(friend, true)) // toUser를 사용하여 FriendResponse 생성
+                .map(friend -> FriendResponse.of(friend, true)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 
@@ -105,7 +102,7 @@ public class FriendService {
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(friend -> FriendResponse.from(friend, true)) // toUser를 사용하여 FriendResponse 생성
+                .map(friend -> FriendResponse.of(friend, true)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 
@@ -116,7 +113,7 @@ public class FriendService {
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(friend -> FriendResponse.from(friend, false)) // toUser를 사용하여 FriendResponse 생성
+                .map(friend -> FriendResponse.of(friend, false)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 

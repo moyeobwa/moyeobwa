@@ -41,9 +41,9 @@ public class Friend {
         this.state = FriendState.ACCEPT;
     }
 
-    public void validateFriendDelete(User user, Friend friend) {
-        if (!user.getId().equals(friend.getFromUser().getId()) && !user.getId().equals(friend.getToUser().getId())) {
-            throw new BusinessException(FriendErrorCode.FRIEND_DELETE_PERMISSION_DENIED);
+    public void validateUserInFriend(User user) {
+        if (!user.getId().equals(this.fromUser.getId()) && !user.getId().equals(this.toUser.getId())) {
+            throw new BusinessException(FriendErrorCode.USER_NOT_PART_OF_FRIEND);
         }
     }
 }
