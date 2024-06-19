@@ -5,12 +5,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.friend.exception.FriendErrorCode;
 import momo.app.user.domain.User;
 
 @Entity
 @Getter
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Friend {
     @Id
@@ -39,9 +41,9 @@ public class Friend {
         this.state = FriendState.ACCEPT;
     }
 
-    public void validateFriendDelete(User user, Friend friend) {
-        if (!user.equals(friend.getFromUser()) || !user.equals(friend.getToUser())) {
-            throw new BusinessException(FriendErrorCode.FRIEND_DELETE_PERMISSION_DENIED);
+    public void validateUserInFriend(User user) {
+        if (!user.getId().equals(this.fromUser.getId()) && !user.getId().equals(this.toUser.getId())) {
+            throw new BusinessException(FriendErrorCode.USER_NOT_PART_OF_FRIEND);
         }
     }
 }

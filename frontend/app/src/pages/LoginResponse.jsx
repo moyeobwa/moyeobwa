@@ -5,17 +5,18 @@ import "./LoginResponse.css"
 
 const LoginResponse = () => {
     const navigate = useNavigate();
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchToken = async () => {
             try {
-                const response = await axios.get('http://3.36.93.156:8080/api/v1/tokens', {
+                const response = await axios.get(`${apiUrl}/api/v1/tokens`, {
                     withCredentials: true
                 });
                 if (response.status === 200) {
                     localStorage.setItem('token', response.data);
                     try {
-                        const response = await axios.get('http://3.36.93.156:8080/api/v1/login/role', {
+                        const response = await axios.get(`${apiUrl}/api/v1/login/role`, {
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('token')}`
                             }

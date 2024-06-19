@@ -1,6 +1,7 @@
 package momo.app.friend.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import momo.app.auth.dto.AuthUser;
 import momo.app.friend.dto.FriendResponse;
 import momo.app.friend.service.FriendService;
@@ -28,19 +29,25 @@ public class FriendController {
     }
 
     @PostMapping("/accept/{id}")
-    ResponseEntity<Void> accept(
+    ResponseEntity<FriendResponse> accept(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        friendService.accept(id, authUser);
 
-        return ResponseEntity.ok()
-                .build();
+        return ResponseEntity.ok(friendService.accept(id, authUser));
     }
 
     @DeleteMapping("/reject/{id}")
     ResponseEntity<Void> reject(@PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
         friendService.reject(id, authUser);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    @DeleteMapping("/cancel/{id}")
+    ResponseEntity<Void> cancel(@PathVariable Long id, @AuthenticationPrincipal AuthUser authUser) {
+        friendService.cancel(id, authUser);
 
         return ResponseEntity.ok()
                 .build();
@@ -61,9 +68,16 @@ public class FriendController {
         return ResponseEntity.ok(friendResponses);
     }
 
-    @GetMapping("/requests")
-    ResponseEntity<List<FriendResponse>> getRequests(@AuthenticationPrincipal AuthUser authUser) {
-        List<FriendResponse> friendResponses = friendService.getRequest(authUser);
+    @GetMapping("/requests/user")
+    ResponseEntity<List<FriendResponse>> getUserRequests(@AuthenticationPrincipal AuthUser authUser) {
+        List<FriendResponse> friendResponses = friendService.getUserRequests(authUser);
+
+        return ResponseEntity.ok(friendResponses);
+    }
+
+    @GetMapping("/requests/friend")
+    ResponseEntity<List<FriendResponse>> getFriendRequests(@AuthenticationPrincipal AuthUser authUser) {
+        List<FriendResponse> friendResponses = friendService.getFriendRequests(authUser);
 
         return ResponseEntity.ok(friendResponses);
     }

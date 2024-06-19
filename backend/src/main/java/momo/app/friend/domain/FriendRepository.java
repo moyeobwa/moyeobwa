@@ -2,6 +2,7 @@ package momo.app.friend.domain;
 
 import momo.app.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +20,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     List<Friend> findAllByToUserAndState(User toUser, FriendState friendState);
 
+    @Modifying
     @Query("DELETE FROM Friend f WHERE f.id IN :ids")
-    void deleteAllByIds(List<Long> ids);
+    int deleteAllByIds(List<Long> ids);
 }

@@ -39,7 +39,7 @@ public class FriendService {
         friendRepository.save(fromFriend);
     }
 
-    public void accept(Long id, AuthUser authUser) {
+    public FriendResponse accept(Long id, AuthUser authUser) {
         Friend requestFriend = findFriend(id);
         User fromUser = findUser(authUser.getId());
         User toUser = requestFriend.getFromUser();
@@ -51,22 +51,32 @@ public class FriendService {
                 .friendState(FriendState.ACCEPT)
                 .build();
         friendRepository.save(acceptFriend);
+        return FriendResponse.of(acceptFriend, true);
     }
 
     public void reject(Long id, AuthUser authUser) {
         Friend friendRequest = findFriend(id);
         User user = findUser(authUser.getId());
 
-        friendRequest.validateFriendDelete(user, friendRequest);
+        friendRequest.validateUserInFriend(user);
 
         friendRepository.delete(friendRequest);
+    }
+
+    public void cancel(Long id, AuthUser authUser) {
+        Friend friendRequest = findFriend(id);
+        User user = findUser(authUser.getId());
+
+        friendRequest.validateUserInFriend(user);
+
+        friendRepository.deleteById(friendRequest.getId());
     }
 
     public void delete(Long id, AuthUser authUser) {
         Friend fromFriend = findFriend(id);
         User user = findUser(authUser.getId());
 
-        fromFriend.validateFriendDelete(user, fromFriend);
+        fromFriend.validateUserInFriend(user);
 
         Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
                 .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
@@ -81,18 +91,29 @@ public class FriendService {
 
         return friends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(FriendResponse::from)
+                .map(friend -> FriendResponse.of(friend, true)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 
-    public List<FriendResponse> getRequest(AuthUser authUser) {
+    public List<FriendResponse> getUserRequests(AuthUser authUser) {
+        User user = findUser(authUser.getId());
+
+        List<Friend> requestFriends = friendRepository.findAllByFromUserAndState(user, FriendState.WAITING);
+
+        return requestFriends.stream()
+                .sorted(Comparator.comparingLong(Friend::getId))
+                .map(friend -> FriendResponse.of(friend, true)) // toUser를 사용하여 FriendResponse 생성
+                .collect(Collectors.toList());
+    }
+
+    public List<FriendResponse> getFriendRequests(AuthUser authUser) {
         User user = findUser(authUser.getId());
 
         List<Friend> requestFriends = friendRepository.findAllByToUserAndState(user, FriendState.WAITING);
 
         return requestFriends.stream()
                 .sorted(Comparator.comparingLong(Friend::getId))
-                .map(FriendResponse::from)
+                .map(friend -> FriendResponse.of(friend, false)) // toUser를 사용하여 FriendResponse 생성
                 .collect(Collectors.toList());
     }
 
@@ -107,6 +128,10 @@ public class FriendService {
     }
 
     private void validateFriendRequest(User fromUser, User toUser) {
+        if (fromUser.getId() == toUser.getId()) {
+            throw new BusinessException(FriendErrorCode.FRIEND_REQUEST_SELF);
+        }
+
         List<Friend> friends = friendRepository.findByTwoUser(fromUser, toUser);
 
         if (friends.size() == 1) {
