@@ -9,6 +9,8 @@ import momo.app.gathering.exception.GatheringErrorCode;
 import momo.app.schedule.domain.Schedule;
 import momo.app.schedule.domain.ScheduleRepository;
 import momo.app.schedule.dto.request.ScheduleCreateRequest;
+import momo.app.schedule.dto.request.ScheduleUpdateRequest;
+import momo.app.schedule.exception.ScheduleErrorCode;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
 import momo.app.user.exception.UserErrorCode;
@@ -42,6 +44,11 @@ public class ScheduleService {
         return schedule.getId();
     }
 
+    public void update(Long id, ScheduleUpdateRequest request) {
+        Schedule schedule = findSchedule(id);
+        schedule.update(request);
+    }
+
     private User findUser(AuthUser authUser) {
         return userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
@@ -50,5 +57,10 @@ public class ScheduleService {
     private Gathering findGathering(Long id) {
         return gatheringRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(GatheringErrorCode.GATHERING_NOT_FOUND));
+    }
+
+    private Schedule findSchedule(Long id) {
+        return scheduleRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
     }
 }

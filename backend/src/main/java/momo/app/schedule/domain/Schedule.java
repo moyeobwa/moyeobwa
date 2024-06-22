@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import momo.app.common.domain.BaseTime;
 import momo.app.gathering.domain.Gathering;
+import momo.app.schedule.dto.request.ScheduleUpdateRequest;
 import momo.app.user.domain.User;
 
 import java.time.LocalDate;
@@ -54,5 +55,12 @@ public class Schedule extends BaseTime {
         this.date = date;
         this.time = time;
         this.gathering = gathering;
+    }
+
+    public void update(ScheduleUpdateRequest request) {
+        this.color = request.color();
+        this.title = request.title();
+        this.content = request.content();
+        this.time = request.time();
     }
 }
