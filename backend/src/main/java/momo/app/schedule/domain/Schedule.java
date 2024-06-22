@@ -3,19 +3,24 @@ package momo.app.schedule.domain;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import momo.app.common.domain.BaseTime;
 import momo.app.gathering.domain.Gathering;
+import momo.app.user.domain.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedule extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String nickname;
 
     private Color color;
 
@@ -34,6 +39,7 @@ public class Schedule extends BaseTime {
 
     @Builder
     public Schedule(
+            String nickname,
             Color color,
             String title,
             String content,
@@ -41,6 +47,7 @@ public class Schedule extends BaseTime {
             LocalTime time,
             Gathering gathering
     ) {
+        this.nickname = nickname;
         this.color = color;
         this.title = title;
         this.content = content;
