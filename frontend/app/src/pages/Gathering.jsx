@@ -19,7 +19,7 @@ const Gathering = () => {
         <div className="content-section">
           {activeTab === 'Messages' && <Chat gatheringId={id} />}
           {activeTab === 'Calendar' && <Calendar />}
-          {activeTab === 'Votes' && <Vote />}
+          {activeTab === 'Votes' && <Vote gatheringId={id} />}
         </div>
       </div>
     </div>

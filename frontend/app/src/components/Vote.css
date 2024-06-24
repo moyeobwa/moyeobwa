@@ -1,0 +1,84 @@
+.vote-container {
+  padding: 20px;
+  width: 170%;
+  height: 100%;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column; /* 수직 정렬 */
+  align-items: center; /* 가운데 정렬 */
+  background: white;
+  border-radius: 5px;
+  box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 20px 0px;
+}
+
+.vote-header {
+  font-size: var(--font-medium);
+  font-weight: var(--weight-bold);
+  margin-bottom: 20px;
+}
+
+.vote-button {
+  padding: 10px 20px;
+  background-color: var(--color-pink);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+.vote-button:hover {
+  background-color: var(--color-orange);
+}
+
+.vote-list-container {
+  width: 50%; /* 가로 공간을 최대한 활용 */
+  max-width: 500px; /* 최대 너비 설정 */
+  max-height: 370px; /* 리스트 영역의 최대 높이 설정 */
+  overflow-y: auto; /* 수직 스크롤 활성화 */
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: rgba(100, 100, 100, 0.2) 0px 4px 12px;
+}
+
+.vote-item {
+  display: flex;
+  justify-content: space-between; /* 공간을 양쪽 끝으로 배치 */
+  align-items: center;
+  margin: 10px 0;
+  padding: 15px;
+  border: 1px solid var(--color-gray);
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: var(--color-light-gray);
+  transition: background-color 0.3s ease;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* 텍스트 생략기호 표시 */
+}
+
+.vote-item:hover {
+  background-color: var(--color-light-pink);
+}
+
+.vote-title {
+  flex-grow: 1;
+  margin-right: 10px; /* 오른쪽 여백 추가 */
+}
+
+.vote-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* 오른쪽 정렬 */
+}
+
+.vote-creator, .vote-date {
+  color: var(--color-dark-gray);
+  font-size: var(--font-small);
+}
