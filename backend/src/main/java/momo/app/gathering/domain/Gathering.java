@@ -2,13 +2,8 @@ package momo.app.gathering.domain;
 
 import static momo.app.gathering.exception.GatheringErrorCode.NOT_MANAGER;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -18,6 +13,7 @@ import lombok.NoArgsConstructor;
 import momo.app.auth.dto.AuthUser;
 import momo.app.common.domain.BaseTime;
 import momo.app.common.error.exception.BusinessException;
+import momo.app.schedule.domain.Schedule;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -50,6 +46,9 @@ public class Gathering extends BaseTime {
     @OneToMany(mappedBy = "gathering")
     private List<GatheringMember> gatheringMembers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "gathering")
+    private List<Schedule> schedules = new ArrayList<>();
+
     @Builder
     public Gathering(
             GatheringInfo gatheringInfo,
@@ -69,6 +68,10 @@ public class Gathering extends BaseTime {
         if (authUser.getId() != managerId) {
             throw new BusinessException(NOT_MANAGER);
         }
+    }
+
+    public void addSchedule(Schedule schedule) {
+        schedules.add(schedule);
     }
 
     public void updateGatheringInfo(GatheringInfo gatheringInfo) {

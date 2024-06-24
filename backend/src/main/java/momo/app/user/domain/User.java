@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import momo.app.common.domain.BaseTime;
 import momo.app.friend.domain.Friend;
+import momo.app.schedule.domain.Schedule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,9 @@ public class User extends BaseTime {
     private String description;
 
     private String interest;
+
+    @OneToMany(mappedBy = "user")
+    private List<Schedule> schedules = new ArrayList<>();
 
     public void authorizeUser() {
         this.role = Role.USER;
