@@ -87,7 +87,13 @@ const Vote = ({ gatheringId }) => {
         <button className="vote-button" onClick={openModal}>새 투표 생성</button>
         {votes.map((vote) => (
           <div key={vote.id} className="vote-item" onClick={() => fetchOptions(vote.id)}>
-            {vote.title}
+            <div className="vote-title">{vote.title}</div>
+            <div className="vote-details">
+              <span className="vote-creator">{vote.creatorName}</span>
+              <span className="vote-date">
+                {new Date(vote.createdAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })} {new Date(vote.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
           </div>
         ))}
       </div>
