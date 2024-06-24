@@ -12,12 +12,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import momo.app.common.domain.BaseTime;
 import momo.app.gathering.domain.Gathering;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Vote {
+public class Vote extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

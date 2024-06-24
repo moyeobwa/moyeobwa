@@ -9,7 +9,6 @@ import momo.app.common.error.exception.BusinessException;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringRepository;
 import momo.app.gathering.exception.GatheringErrorCode;
-import momo.app.vote.domain.Vote;
 import momo.app.vote.domain.VoteRepository;
 import momo.app.vote.dto.VoteResponse;
 import org.springframework.stereotype.Service;
@@ -26,10 +25,7 @@ public class VoteQueryService {
     public List<VoteResponse> findAll(AuthUser authUser, Long gatheringId) {
         Gathering gathering = findGathering(gatheringId);
         validateUserInGathering(authUser, gatheringId);
-        List<Vote> votes = voteRepository.findByGathering(gathering);
-        return votes.stream()
-                .map(vote -> VoteResponse.from(vote))
-                .toList();
+        return  voteRepository.findAllByGatheringWithCreator(gathering);
     }
 
     private void validateUserInGathering(AuthUser authUser, Long gatheringId) {
