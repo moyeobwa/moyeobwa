@@ -10,6 +10,7 @@ public record ScheduleCreateRequest(
         String title,
         String content,
         LocalDate date,
-        LocalTime time
+        LocalTime time,
+        Long gatheringId
 ) {
 }
