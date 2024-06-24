@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM Schedule s WHERE s.gathering = :gathering AND s.date = :date")
-    List<Schedule> findAllByGatheringIdAndDate(Gathering gathering, LocalDate date);
+    List<Schedule> findAllByGatheringAndDate(Gathering gathering, LocalDate date);
 }

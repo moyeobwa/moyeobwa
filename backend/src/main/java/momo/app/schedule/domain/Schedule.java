@@ -9,11 +9,12 @@ import momo.app.common.domain.BaseTime;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.gathering.domain.Gathering;
 import momo.app.schedule.dto.request.ScheduleUpdateRequest;
-import momo.app.schedule.exception.ScheduleErrorCode;
 import momo.app.user.domain.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import static momo.app.schedule.exception.ScheduleErrorCode.SCHEDULE_NOT_EQUAL_USER;
 
 @Entity
 @Getter
@@ -22,8 +23,6 @@ public class Schedule extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String nickname;
 
     private Color color;
 
@@ -37,25 +36,29 @@ public class Schedule extends BaseTime {
     private LocalTime time;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
 
     @Builder
     public Schedule(
-            String nickname,
             Color color,
             String title,
             String content,
             LocalDate date,
             LocalTime time,
+            User user,
             Gathering gathering
     ) {
-        this.nickname = nickname;
         this.color = color;
         this.title = title;
         this.content = content;
         this.date = date;
         this.time = time;
+        this.user = user;
         this.gathering = gathering;
     }
 
@@ -66,9 +69,9 @@ public class Schedule extends BaseTime {
         this.time = request.time();
     }
 
-    public void validateUserAndSchedule(User user) {
-        if (!user.getNickname().equals(this.nickname)) {
-            throw new BusinessException(ScheduleErrorCode.SCHEDULE_NOT_EQUAL_USER);
+    public void validateUser(User user) {
+        if (!user.getId().equals(this.user.getId())) {
+            throw new BusinessException(SCHEDULE_NOT_EQUAL_USER);
         }
     }
 }

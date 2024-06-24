@@ -17,7 +17,7 @@ public record ScheduleResponse(
         return new ScheduleResponse(
                 schedule.getId(),
                 schedule.getColor(),
-                schedule.getNickname(),
+                schedule.getUser().getNickname(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getTime()

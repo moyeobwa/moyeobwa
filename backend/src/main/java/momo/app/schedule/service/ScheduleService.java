@@ -5,16 +5,13 @@ import momo.app.auth.dto.AuthUser;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringRepository;
-import momo.app.gathering.exception.GatheringErrorCode;
 import momo.app.schedule.domain.Schedule;
 import momo.app.schedule.domain.ScheduleRepository;
 import momo.app.schedule.dto.request.ScheduleCreateRequest;
 import momo.app.schedule.dto.request.ScheduleUpdateRequest;
 import momo.app.schedule.dto.response.ScheduleResponse;
-import momo.app.schedule.exception.ScheduleErrorCode;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
-import momo.app.user.exception.UserErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +42,7 @@ public class ScheduleService {
 
         Schedule schedule = Schedule.builder()
                 .color(request.color())
-                .nickname(user.getNickname())
+                .user(user)
                 .title(request.title())
                 .content(request.content())
                 .date(request.date())
@@ -66,14 +63,14 @@ public class ScheduleService {
         User user = findUser(authUser);
         Schedule schedule = findSchedule(id);
 
-        schedule.validateUserAndSchedule(user);
+        schedule.validateUser(user);
 
         schedule.update(request);
     }
 
     public List<ScheduleResponse> get(Long gatheringId, LocalDate date) {
         Gathering gathering = findGathering(gatheringId);
-        List<Schedule> schedules = scheduleRepository.findAllByGatheringIdAndDate(gathering, date);
+        List<Schedule> schedules = scheduleRepository.findAllByGatheringAndDate(gathering, date);
 
         return schedules.stream()
                 .map(schedule -> ScheduleResponse.from(schedule))
@@ -85,7 +82,7 @@ public class ScheduleService {
         User user = findUser(authUser);
         Schedule schedule = findSchedule(id);
 
-        schedule.validateUserAndSchedule(user);
+        schedule.validateUser(user);
 
         scheduleRepository.delete(schedule);
     }
