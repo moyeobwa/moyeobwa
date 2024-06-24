@@ -6,8 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import momo.app.common.domain.BaseTime;
+import momo.app.common.error.exception.BusinessException;
 import momo.app.gathering.domain.Gathering;
 import momo.app.schedule.dto.request.ScheduleUpdateRequest;
+import momo.app.schedule.exception.ScheduleErrorCode;
 import momo.app.user.domain.User;
 
 import java.time.LocalDate;
@@ -62,5 +64,11 @@ public class Schedule extends BaseTime {
         this.title = request.title();
         this.content = request.content();
         this.time = request.time();
+    }
+
+    public void validateUserAndSchedule(User user) {
+        if (!user.getNickname().equals(this.nickname)) {
+            throw new BusinessException(ScheduleErrorCode.SCHEDULE_NOT_EQUAL_USER);
+        }
     }
 }
