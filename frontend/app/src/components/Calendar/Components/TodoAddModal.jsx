@@ -58,7 +58,7 @@ const TodoAddModal = ({
   };
 
   return (
-    <div className={open ? 'modal openModal' : 'modal'}>
+    <div className={open ? 'modal openModal' : 'modal-calendar'}>
       <div className='add_form'>
         <div className='add_infoBox'>
           <h2 className='add_info'>일정 등록</h2>
