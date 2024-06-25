@@ -6,15 +6,17 @@ import axios from 'axios';
 import './Chat.css';
 
 const Chat = ({ gatheringId }) => {
+  const token = localStorage.getItem('token');
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const senderId = 1; // 현재 사용자의 아이디
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/v1/chat-messages/gatherings/${gatheringId}`, {
+    axios.get(`${apiUrl}/api/v1/chat-messages/gatherings/${gatheringId}`, {
       headers: {
-        Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcyMzE3NzQ1NCwiZW1haWwiOiJhZG1pbkBtb3llb2J3YS5jb20ifQ.imODjEb3vsLoB77f_erhM5cpauVqRyJJAE3vmYbCh1HwMyqZhHmqlQq72Oonn3_tBJEGtGCgP6aC-CQSmjf8Og'
+        Authorization: `Bearer ${token}`
       }
     })
       .then(response => {
@@ -29,7 +31,7 @@ const Chat = ({ gatheringId }) => {
     const stompClient = new Client({
       brokerURL: "ws://localhost:8080/ws",
       connectHeaders: {
-        Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcyMzE3NzQ1NCwiZW1haWwiOiJhZG1pbkBtb3llb2J3YS5jb20ifQ.imODjEb3vsLoB77f_erhM5cpauVqRyJJAE3vmYbCh1HwMyqZhHmqlQq72Oonn3_tBJEGtGCgP6aC-CQSmjf8Og'
+        Authorization: `Bearer ${token}`
       },
       debug: function (str) {
         console.log(str);
