@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Color {
-    RED("COLOR_RED"), YELLOW("COLOR_YELLOW"), GREEN("COLOR_GREEN");
+    PINK("COLOR_PINK"), YELLOW("COLOR_YELLOW"), GREEN("COLOR_GREEN");
 
     private final String colorType;
 }
