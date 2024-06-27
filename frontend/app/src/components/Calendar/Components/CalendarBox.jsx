@@ -1,3 +1,4 @@
+import React from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './CalendarBox.css';
@@ -9,48 +10,60 @@ const CalendarBox = ({
   schedule,
   closeDetail,
 }) => {
-
   const show = ({ date, view }) => {
+    const miniFormatted = convertScheduleToMiniSchedule(schedule);
+
     if (view === 'month') {
-      const month = date.getMonth() + '월';
-      let html = [];
-      const scheduleList = Object.keys(schedule).includes(
-        `${date.getMonth()}월`
-      )
-        ? schedule[month]
-            .filter(
-              (todo) => todo.date === moment(date).format('YYYY년 MM월 DD일')
-            )
-            .sort((a, b) => a.idx - b.idx)
-        : [];
+      const dateKey = moment(date).format('YYYY-MM-DD');
+      const scheduleList = miniFormatted[dateKey] || [];
 
       const korean = /[ㄱ-ㅎ|ㅏ-ㅣ-가-힣]/;
-      for (let i = 0; i < scheduleList.length; i++) {
-        if (i === 2) break;
-        const selectedColor =
-          scheduleList[i].color === 'pink'
-            ? '#ff8f8f'
-            : scheduleList[i].color === 'yellow'
-            ? '#fbde7e'
-            : '#8cbc59';
-        html.push(
-          <div
-            key={scheduleList[i].id}
-            style={{ backgroundColor: selectedColor }}
-          >
-            {korean.test(scheduleList[i].title)
-              ? scheduleList[i].title.length > 4
-                ? scheduleList[i].title.substring(0, 4) + '..'
-                : scheduleList[i].title
-              : scheduleList[i].title.length > 5
-              ? scheduleList[i].title.substring(0, 5) + '..'
-              : scheduleList[i].title}
-          </div>
-        );
-      }
-      return <div className="scheduleBox">{html}</div>;
+      return (
+        <div className="scheduleBox">
+          {scheduleList.map((todo) => (
+            <div
+              key={todo.id}
+              className="scheduleItem"
+              style={{ backgroundColor: getColor(todo.color) }}
+              onClick={() => closeDetail()}
+            >
+              {korean.test(todo.title) && todo.title.length > 4
+                ? `${todo.title.substring(0, 4)}..`
+                : todo.title.length > 5
+                ? `${todo.title.substring(0, 5)}..`
+                : todo.title}
+            </div>
+          ))}
+        </div>
+      );
     }
   };
+
+  const convertScheduleToMiniSchedule = (schedule) => {
+    const miniFormatted = {};
+    for (const month in schedule) {
+      schedule[month].forEach((item) => {
+        const dateKey = item.date.substring(0, 10);
+        if (!miniFormatted[dateKey]) {
+          miniFormatted[dateKey] = [];
+        }
+        miniFormatted[dateKey].push(item);
+      });
+    }
+    return miniFormatted;
+  };
+
+  const getColor = (color) => {
+    switch (color.toUpperCase()) {
+      case 'YELLOW':
+        return '#fbde7e';
+      case 'GREEN':
+        return '#8cbc59';
+      default:
+        return '#ff8f8f';
+    }
+  };
+
   return (
     <div className="container">
       <Calendar
@@ -62,10 +75,11 @@ const CalendarBox = ({
         next2Label={null}
         prev2Label={null}
         tileContent={show}
-        onClickDay={closeDetail}
+        onClickDay={closeDetail} // 날짜 클릭 시 일정 상세 뷰 닫기
         className="white"
       />
     </div>
   );
-}
- export default CalendarBox;
+};
+
+export default CalendarBox;
