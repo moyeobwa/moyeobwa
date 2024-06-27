@@ -44,10 +44,9 @@ public class ScheduleController {
 
     @GetMapping("/{gatheringId}")
     public ResponseEntity<List<ScheduleResponse>> get(
-            @PathVariable Long gatheringId,
-            @RequestParam LocalDate date
+            @PathVariable Long gatheringId
     ) {
-        return ResponseEntity.ok(scheduleService.get(gatheringId, date));
+        return ResponseEntity.ok(scheduleService.get(gatheringId));
     }
 
     @DeleteMapping("/{id}")

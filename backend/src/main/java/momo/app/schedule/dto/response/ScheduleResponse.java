@@ -3,6 +3,7 @@ package momo.app.schedule.dto.response;
 import momo.app.schedule.domain.Color;
 import momo.app.schedule.domain.Schedule;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ScheduleResponse(
@@ -11,6 +12,7 @@ public record ScheduleResponse(
         String nickname,
         String title,
         String content,
+        LocalDate date,
         LocalTime time
 ) {
     public static ScheduleResponse from(Schedule schedule) {
@@ -20,6 +22,7 @@ public record ScheduleResponse(
                 schedule.getUser().getNickname(),
                 schedule.getTitle(),
                 schedule.getContent(),
+                schedule.getDate(),
                 schedule.getTime()
                 );
     }

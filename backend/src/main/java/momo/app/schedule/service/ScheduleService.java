@@ -68,9 +68,9 @@ public class ScheduleService {
         schedule.update(request);
     }
 
-    public List<ScheduleResponse> get(Long gatheringId, LocalDate date) {
+    public List<ScheduleResponse> get(Long gatheringId) {
         Gathering gathering = findGathering(gatheringId);
-        List<Schedule> schedules = scheduleRepository.findAllByGatheringAndDate(gathering, date);
+        List<Schedule> schedules = scheduleRepository.findAllByGathering(gathering);
 
         return schedules.stream()
                 .map(schedule -> ScheduleResponse.from(schedule))
