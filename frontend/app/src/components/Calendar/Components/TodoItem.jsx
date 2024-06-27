@@ -11,9 +11,9 @@ const TodoItem = ({
 }) => {
 
   const selectedColor =
-    todo.color === 'pink'
+    todo.color === 'PINK'
       ? '#ff8f8f'
-      : todo.color === 'yellow'
+      : todo.color === 'YELLOW'
       ? '#fbde7e'
       : '#8cbc59';
   return (
