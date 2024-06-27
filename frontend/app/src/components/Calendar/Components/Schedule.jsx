@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { AiOutlinePlus } from 'react-icons/ai';
 import './Schedule.css';
@@ -17,26 +17,32 @@ const Schedule = ({
   closeDetail,
   updateTodoItem,
 }) => {
-
   const [isEdit, setIsEdit] = useState(false);
+
+  useEffect(() => {
+    
+  }, [schedule]);
+
   const handleEditTrue = () => {
     setIsEdit(true);
   };
+
   const handleEditFalse = () => {
     setIsEdit(false);
   };
-  // 해당 날짜의 일정 리스트 만들기
+
   const month = date.getMonth() + '월';
+
   const scheduleList = Object.keys(schedule).includes(`${date.getMonth()}월`)
     ? schedule[month]
-        .filter((todo) => todo.date === moment(date).format('YYYY년 MM월 DD일'))
+        .filter((todo) => todo.date === moment(date).format('YYYY-MM-DD'))
         .sort((a, b) => a.idx - b.idx)
     : [];
 
+    
+
   return (
-    <div
-      className="schedule-container"
-    >
+    <div className="schedule-container">
       <div className="schedule-header">
         <p className="schedule-title">Schedule</p>
         <div className="schedule-dateBox">
@@ -53,13 +59,11 @@ const Schedule = ({
         </div>
       </div>
       <div className="schedule-scheduleBox">
-        {/* 해당 date에 맞는 데이터를 골라 map으로 돌며 item 생성. */}
         {isList &&
-          scheduleList.map((todo, index) => (
+          scheduleList.map((todo) => (
             <TodoItem
               key={todo.id}
               todo={todo}
-              month={month}
               deleteTodoItem={deleteTodoItem}
               handleTodo={handleTodo}
               handleEditTrue={handleEditTrue}
@@ -68,7 +72,6 @@ const Schedule = ({
         {!isList && !isEdit && (
           <TodoDetail
             todo={selectedTodo}
-            month={month}
             closeDetail={closeDetail}
             deleteTodoItem={deleteTodoItem}
             handleEditTrue={handleEditTrue}
@@ -77,9 +80,7 @@ const Schedule = ({
         {!isList && isEdit && (
           <TodoEdit
             todo={selectedTodo}
-            month={month}
             updateTodoItem={updateTodoItem}
-            schedule={schedule}
             handleEditFalse={handleEditFalse}
             handleTodo={handleTodo}
           />
@@ -87,6 +88,6 @@ const Schedule = ({
       </div>
     </div>
   );
-}
+};
 
 export default Schedule;
