@@ -7,13 +7,12 @@ const TodoEdit = ({
   todo,
   month,
   updateTodoItem,
-  schedule,
   handleEditFalse,
   handleTodo,
 }) => {
   const [color, setColor] = useState(todo.color);
   const [title, setTitle] = useState(todo.title);
-  const [description, setDescrpition] = useState(todo.description);
+  const [content, setContent] = useState(todo.content);
   const [time, setTime] = useState(todo.time);
 
   const updateSchedule = (e) => {
@@ -25,9 +24,9 @@ const TodoEdit = ({
     const newTodo = {
       id: todo.id,
       date: todo.date,
-      color: `${color}`,
+      color: color.toUpperCase(),
       title: `${title}`,
-      description: `${description}`,
+      content: `${content}`,
       time: `${time}`,
       idx: todo.idx,
     };
@@ -58,9 +57,9 @@ const TodoEdit = ({
       <textarea
         className="edit-description"
         rows="5"
-        placeholder="description"
-        value={description}
-        onChange={(e) => setDescrpition(e.target.value)}
+        placeholder="content"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
       />
       <div className="edit-btnBox">
         <AiOutlineClose className="close" onClick={handleEditFalse} />

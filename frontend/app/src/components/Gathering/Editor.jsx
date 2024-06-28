@@ -77,11 +77,9 @@ const Editor = () => {
                 }
             });
 
-            console.log(response);
 
             if (response.ok) {
                 const location = response.headers.get("Location");
-                console.log("Location header:", location); // 로그 추가
                 if (location) {
                     const newGroupId = location.split("/").pop();
                     addGroup({

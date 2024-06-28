@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    @Query("SELECT s FROM Schedule s WHERE s.gathering = :gathering AND s.date = :date")
-    List<Schedule> findAllByGatheringAndDate(Gathering gathering, LocalDate date);
+    @Query("SELECT s FROM Schedule s WHERE s.gathering = :gathering")
+    List<Schedule> findAllByGathering(Gathering gathering);
 }

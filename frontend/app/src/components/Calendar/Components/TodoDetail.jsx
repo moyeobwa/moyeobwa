@@ -11,9 +11,9 @@ const TodoDetail = ({
   handleEditTrue,
 }) => {
   const selectedColor =
-    todo.color === 'pink'
+    todo.color === 'PINK'
       ? '#ff8f8f'
-      : todo.color === 'yellow'
+      : todo.color === 'YELLOW'
       ? '#fbde7e'
       : '#8cbc59';
 
@@ -25,7 +25,7 @@ const TodoDetail = ({
         </h2>
         <p className="detail-time">{todo.time}</p>
       </div>
-      <p className="detail-description">{todo.description}</p>
+      <p className="detail-description">{todo.content}</p>
       <div className="detail-btnBox">
         <AiOutlineClose
           className="detail-close"

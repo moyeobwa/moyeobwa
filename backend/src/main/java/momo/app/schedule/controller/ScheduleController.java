@@ -21,14 +21,13 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<ScheduleResponse> create(
             @RequestBody ScheduleCreateRequest request,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        Long scheduleId = scheduleService.create(request, authUser);
+        ScheduleResponse schedule = scheduleService.create(request, authUser);
 
-        return ResponseEntity.created(URI.create("/api/v1/schedules/" + scheduleId))
-                .build();
+        return ResponseEntity.ok(schedule);
     }
 
     @PostMapping("/{id}")
@@ -44,10 +43,9 @@ public class ScheduleController {
 
     @GetMapping("/{gatheringId}")
     public ResponseEntity<List<ScheduleResponse>> get(
-            @PathVariable Long gatheringId,
-            @RequestParam LocalDate date
+            @PathVariable Long gatheringId
     ) {
-        return ResponseEntity.ok(scheduleService.get(gatheringId, date));
+        return ResponseEntity.ok(scheduleService.get(gatheringId));
     }
 
     @DeleteMapping("/{id}")

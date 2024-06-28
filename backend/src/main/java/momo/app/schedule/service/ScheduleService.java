@@ -31,7 +31,7 @@ public class ScheduleService {
     private final GatheringRepository gatheringRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public Long create(
+    public ScheduleResponse create(
             ScheduleCreateRequest request,
             AuthUser authUser
     ) {
@@ -52,7 +52,7 @@ public class ScheduleService {
 
         scheduleRepository.save(schedule);
 
-        return schedule.getId();
+        return ScheduleResponse.from(schedule);
     }
 
     public void update(
@@ -68,9 +68,9 @@ public class ScheduleService {
         schedule.update(request);
     }
 
-    public List<ScheduleResponse> get(Long gatheringId, LocalDate date) {
+    public List<ScheduleResponse> get(Long gatheringId) {
         Gathering gathering = findGathering(gatheringId);
-        List<Schedule> schedules = scheduleRepository.findAllByGatheringAndDate(gathering, date);
+        List<Schedule> schedules = scheduleRepository.findAllByGathering(gathering);
 
         return schedules.stream()
                 .map(schedule -> ScheduleResponse.from(schedule))
