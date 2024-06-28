@@ -17,10 +17,10 @@ const CalendarBox = ({
       const dateKey = moment(date).format('YYYY-MM-DD');
       const scheduleList = miniFormatted[dateKey] || [];
 
-      const korean = /[ㄱ-ㅎ|ㅏ-ㅣ-가-힣]/;
+      const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
       return (
         <div className="scheduleBox">
-          {scheduleList.map((todo) => (
+          {scheduleList.slice(0, 2).map((todo) => (
             <div
               key={todo.id}
               className="scheduleItem"
