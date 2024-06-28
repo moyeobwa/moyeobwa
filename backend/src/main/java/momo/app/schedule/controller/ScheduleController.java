@@ -25,9 +25,10 @@ public class ScheduleController {
             @RequestBody ScheduleCreateRequest request,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        ScheduleResponse schedule = scheduleService.create(request, authUser);
+        Long id = scheduleService.create(request, authUser);
 
-        return ResponseEntity.ok(schedule);
+        return ResponseEntity.created(URI.create("/api/v1/schedules/" + id))
+                .build();
     }
 
     @PostMapping("/{id}")

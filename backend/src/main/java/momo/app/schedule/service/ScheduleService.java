@@ -31,7 +31,7 @@ public class ScheduleService {
     private final GatheringRepository gatheringRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public ScheduleResponse create(
+    public Long create(
             ScheduleCreateRequest request,
             AuthUser authUser
     ) {
@@ -52,7 +52,7 @@ public class ScheduleService {
 
         scheduleRepository.save(schedule);
 
-        return ScheduleResponse.from(schedule);
+        return schedule.getId();
     }
 
     public void update(
