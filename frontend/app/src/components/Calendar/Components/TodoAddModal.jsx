@@ -49,12 +49,15 @@ const TodoAddModal = ({
         },
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         const month = date.getMonth() + '월';
-        const newTodo = response.data;
+        const newTodo = {
+          ...newSchedule,
+          id: response.data,
+          date: moment(date).format('YYYY-MM-DD'),
+        };
 
         if (Object.keys(schedule).includes(`${date.getMonth()}월`)) {
-          newTodo.idx = schedule[month].length + 1;
           const monthSchedule = schedule[month].concat(newTodo);
           addSchedule((prev) => ({
             ...prev,
