@@ -14,6 +14,9 @@ const Editor = () => {
     const [capacity, setCapacity] = useState("");
     const [image, setImage] = useState(null);
 
+    const token = localStorage.getItem('token');
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
     const nav = useNavigate();
 
     const onChangeCategory = (e) => {
@@ -69,11 +72,11 @@ const Editor = () => {
         })], { type: "application/json" }));
 
         try {
-            const response = await fetch("http://127.0.0.1:8080/api/v1/gatherings", {
+            const response = await fetch(`${apiUrl}/api/v1/gatherings`, {
                 method: "POST",
                 body: formData,
                 headers: {
-                    "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImV4cCI6MTcyMzE3NzQ1NCwiZW1haWwiOiJhZG1pbkBtb3llb2J3YS5jb20ifQ.imODjEb3vsLoB77f_erhM5cpauVqRyJJAE3vmYbCh1HwMyqZhHmqlQq72Oonn3_tBJEGtGCgP6aC-CQSmjf8Og"
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
