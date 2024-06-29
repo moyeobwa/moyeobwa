@@ -37,7 +37,7 @@ public class GatheringController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> create(
-            @RequestPart MultipartFile image,
+            @RequestPart(required = false) MultipartFile image,
             @RequestPart GatheringCreateJsonRequest request,
             @AuthenticationPrincipal AuthUser authUser
     ) {
