@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 const Card = ({ 
     id,
-    title,
-    describe,
-    date
+    name,
+    description,
+    createdAt
 }) => {
     const nav = useNavigate();
 
@@ -13,7 +13,7 @@ const Card = ({
         nav(`/gathering/${id}`)
     }
 
-    const formattedDate = new Date(date).toLocaleDateString();
+    const formattedDate = new Date(createdAt).toLocaleDateString();
 
     return (
         <div 
@@ -23,10 +23,10 @@ const Card = ({
             <div className="card_image"></div>
             <div className="card_content">
                 <span className="card_title">
-                    {title}
+                    {name}
                 </span>
                 <p className="card_describe">
-                    {describe}
+                    {description}
                 </p>
                 <span className="card_date">
                     {formattedDate}
