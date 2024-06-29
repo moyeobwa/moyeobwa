@@ -2,8 +2,10 @@ package momo.app.vote.service;
 
 import static momo.app.gathering.exception.GatheringErrorCode.GATHERING_NOT_FOUND;
 import static momo.app.gathering.exception.GatheringErrorCode.USER_NOT_IN_GATHERING;
+import static momo.app.user.exception.UserErrorCode.USER_NOT_FOUND;
 import static momo.app.vote.exception.OptionErrorCode.OPTION_NOT_FOUND;
 import static momo.app.vote.exception.OptionErrorCode.TOO_FEW_OPTIONS;
+import static momo.app.vote.exception.VoteErrorCode.ALREADY_VOTE;
 import static momo.app.vote.exception.VoteErrorCode.ALREADY_VOTE_END;
 import static momo.app.vote.exception.VoteErrorCode.VOTE_NOT_FOUND;
 
@@ -13,8 +15,12 @@ import momo.app.auth.dto.AuthUser;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.gathering.domain.Gathering;
 import momo.app.gathering.domain.GatheringRepository;
+import momo.app.user.domain.User;
+import momo.app.user.domain.UserRepository;
 import momo.app.vote.domain.Option;
 import momo.app.vote.domain.OptionRepository;
+import momo.app.vote.domain.UserOption;
+import momo.app.vote.domain.UserOptionRepository;
 import momo.app.vote.domain.Vote;
 import momo.app.vote.domain.VoteRepository;
 import momo.app.vote.dto.VoteCreateRequest;
@@ -32,6 +38,8 @@ public class VoteCommandService {
     private final VoteRepository voteRepository;
     private final OptionRepository optionRepository;
     private final GatheringRepository gatheringRepository;
+    private final UserRepository userRepository;
+    private final UserOptionRepository userOptionRepository;
 
     public Long create(VoteCreateRequest request, AuthUser authUser) {
         Gathering gathering = findGathering(request.gatheringId());
@@ -53,9 +61,19 @@ public class VoteCommandService {
 
     public void vote(Long voteId, VoteRequest request, AuthUser authUser) {
         Vote vote = findVote(voteId);
+        User user = findUser(authUser.getId());
         Option option = findOption(request);
-        validateCanVote(vote, authUser, request);
+        validateCanVote(vote, user, request);
+        userOptionRepository.save(UserOption.builder()
+                .option(option)
+                .user(user)
+                .build());
         option.vote();
+    }
+
+    private User findUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
     }
 
     private void validateCanCreateVote(
@@ -63,7 +81,7 @@ public class VoteCommandService {
             VoteCreateRequest request,
             AuthUser authUser
     ) {
-        validateUserInGathering(request.gatheringId(), authUser);
+        validateUserInGathering(request.gatheringId(), authUser.getId());
         validateNumberOfOptions(optionNames);
     }
 
@@ -75,12 +93,19 @@ public class VoteCommandService {
 
     private void validateCanVote(
             Vote vote,
-            AuthUser authUser,
+            User user,
             VoteRequest request
     ) {
         validateVotePeriod(vote);
-        validateUserInGathering(vote.getGathering().getId(), authUser);
+        validateUserInGathering(vote.getGathering().getId(), user.getId());
         validateOptionInVote(request.optionId(), vote.getId());
+        validateDuplicateVote(vote, user);
+    }
+
+    private void validateDuplicateVote(Vote vote, User user) {
+        if (userOptionRepository.checkByVoteAndUser(vote, user)) {
+            throw new BusinessException(ALREADY_VOTE);
+        }
     }
 
     private void validateVotePeriod(Vote vote) {
@@ -103,8 +128,8 @@ public class VoteCommandService {
                 .orElseThrow(() -> new BusinessException(VOTE_NOT_FOUND));
     }
 
-    private void validateUserInGathering(Long gatheringId, AuthUser authUser) {
-        if (!gatheringRepository.checkExistsByGatheringIdAndUserId(gatheringId, authUser.getId())) {
+    private void validateUserInGathering(Long gatheringId, Long userId) {
+        if (!gatheringRepository.checkExistsByGatheringIdAndUserId(gatheringId, userId)) {
             throw new BusinessException(USER_NOT_IN_GATHERING);
         }
     }
