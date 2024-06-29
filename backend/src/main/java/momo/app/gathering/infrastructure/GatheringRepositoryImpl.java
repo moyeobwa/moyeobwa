@@ -128,6 +128,7 @@ public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
     private OrderSpecifier createGatheringSpecifier(GatheringSortType sortType) {
         return switch (sortType) {
             case MEMBER_COUNT -> new OrderSpecifier<>(Order.DESC, gatheringMember.countDistinct());
+            case LATEST -> new OrderSpecifier<>(Order.DESC, gathering.updatedDate);
             default -> new OrderSpecifier<>(Order.DESC, gathering.id);
         };
     }
