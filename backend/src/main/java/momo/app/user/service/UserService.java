@@ -1,6 +1,5 @@
 package momo.app.user.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,20 +10,16 @@ import momo.app.auth.jwt.service.JwtSendService;
 import momo.app.common.error.exception.BusinessException;
 import momo.app.common.util.RedisUtil;
 import momo.app.image.S3Service;
-import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
 import momo.app.user.dto.request.UserSignupRequest;
+import momo.app.user.dto.response.UserNicknameResponse;
 import momo.app.user.dto.response.UserResponse;
 import momo.app.user.exception.UserErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
-import static momo.app.user.domain.QUser.user;
 
 @Service
 @Slf4j
@@ -63,15 +58,21 @@ public class UserService {
         user.logout();
     }
 
+    public List<UserNicknameResponse> search(String nickname) {
+        List<User> users = userRepository.findByNicknameContaining(nickname);
+        return users.stream()
+                .map(user -> UserNicknameResponse.from(user))
+                .toList();
+    }
+
+    public UserResponse getUser(AuthUser authUser) {
+        User user = findUser(authUser);
+
+        return UserResponse.from(user);
+    }
+
     private User findUser(AuthUser authUser) {
         return userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
-    }
-
-    public List<UserResponse> search(String nickname) {
-        List<User> users = userRepository.findByNicknameContaining(nickname);
-        return users.stream()
-                .map(user -> UserResponse.from(user))
-                .toList();
     }
 }
