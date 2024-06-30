@@ -21,13 +21,18 @@ import momo.app.gathering.dto.GatheringCreateRequest;
 import momo.app.image.S3Service;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class GatheringCommandService {
+
+    @Value("${gathering.default.image}")
+    private String defaultImage;
 
     private final GatheringRepository gatheringRepository;
     private final GatheringMemberRepository gatheringMemberRepository;
@@ -40,7 +45,7 @@ public class GatheringCommandService {
 
     public Long create(GatheringCreateRequest request, AuthUser authUser) {
         User user = findUser(authUser.getId());
-        String uploadedImageUrl = s3Service.upload(request.image());
+        String uploadedImageUrl = uploadImage(request.image());
         GatheringInfo gatheringInfo = GatheringInfo.of(
                 request.category(),
                 request.name(),
@@ -91,6 +96,13 @@ public class GatheringCommandService {
                 .build());
 
         return gathering.getId();
+    }
+
+    private String uploadImage(MultipartFile image) {
+        if (image != null) {
+            return s3Service.upload(image);
+        }
+        return defaultImage;
     }
 
     public void update(Long id, GatheringUpdateRequest request, AuthUser authUser) {

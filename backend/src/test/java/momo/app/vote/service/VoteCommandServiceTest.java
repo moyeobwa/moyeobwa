@@ -16,8 +16,10 @@ import momo.app.gathering.domain.GatheringInfo;
 import momo.app.gathering.domain.GatheringRepository;
 import momo.app.user.domain.Role;
 import momo.app.user.domain.User;
+import momo.app.user.domain.UserRepository;
 import momo.app.vote.domain.Option;
 import momo.app.vote.domain.OptionRepository;
+import momo.app.vote.domain.UserOptionRepository;
 import momo.app.vote.domain.Vote;
 import momo.app.vote.domain.VoteRepository;
 import momo.app.vote.dto.VoteCreateRequest;
@@ -40,6 +42,12 @@ class VoteCommandServiceTest {
 
     @Mock
     OptionRepository optionRepository;
+
+    @Mock
+    UserRepository userRepository;
+
+    @Mock
+    UserOptionRepository userOptionRepository;
 
     @InjectMocks
     VoteCommandService voteCommandService;
@@ -161,8 +169,10 @@ class VoteCommandServiceTest {
 
         given(voteRepository.findById(any())).willReturn(Optional.of(vote));
         given(optionRepository.findById(any())).willReturn(Optional.of(option));
+        given(userRepository.findById(any())).willReturn(Optional.of(user));
         given(gatheringRepository.checkExistsByGatheringIdAndUserId(any(), any())).willReturn(true);
         given(optionRepository.checkExistsByIdAndVoteId(any(), any())).willReturn(true);
+        given(userOptionRepository.checkByVoteAndUser(any(), any())).willReturn(false);
 
         voteCommandService.vote(1L, request, authUser);
         Assertions.assertThat(option.getCount()).isEqualTo(1);
@@ -199,6 +209,7 @@ class VoteCommandServiceTest {
 
         given(voteRepository.findById(any())).willReturn(Optional.of(vote));
         given(optionRepository.findById(any())).willReturn(Optional.of(option));
+        given(userRepository.findById(any())).willReturn(Optional.of(user));
 
         Assertions.assertThatThrownBy(() -> voteCommandService.vote(1L, request, authUser))
                 .isInstanceOf(BusinessException.class)
