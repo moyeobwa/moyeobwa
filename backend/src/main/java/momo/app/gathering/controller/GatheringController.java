@@ -8,7 +8,12 @@ import momo.app.auth.dto.AuthUser;
 import momo.app.common.dto.SliceResponse;
 import momo.app.gathering.domain.Category;
 import momo.app.gathering.domain.GatheringSortType;
-import momo.app.gathering.dto.*;
+import momo.app.gathering.dto.GatheringCreateJsonRequest;
+import momo.app.gathering.dto.GatheringCreateRequest;
+import momo.app.gathering.dto.GatheringResponse;
+import momo.app.gathering.dto.GatheringNameResponse;
+import momo.app.gathering.dto.GatheringUpdateRequest;
+import momo.app.gathering.dto.GatheringUpdateJsonRequest;
 import momo.app.gathering.service.GatheringCommandService;
 import momo.app.gathering.service.GatheringQueryService;
 import org.springframework.http.MediaType;
@@ -86,7 +91,7 @@ public class GatheringController {
 
 
     @GetMapping("/user")
-    public ResponseEntity<List<GatheringUserResponse>> getUserGathering(@AuthenticationPrincipal AuthUser authUser) {
+    public ResponseEntity<List<GatheringNameResponse>> getUserGathering(@AuthenticationPrincipal AuthUser authUser) {
         return ResponseEntity.ok(gatheringQueryService.getUserGathering(authUser));
     }
 

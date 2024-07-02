@@ -16,7 +16,7 @@ import momo.app.gathering.domain.Category;
 import momo.app.gathering.domain.GatheringMember;
 import momo.app.gathering.domain.GatheringSortType;
 import momo.app.gathering.dto.GatheringResponse;
-import momo.app.gathering.dto.GatheringUserResponse;
+import momo.app.gathering.dto.GatheringNameResponse;
 import momo.app.user.domain.User;
 import org.springframework.stereotype.Repository;
 
@@ -68,9 +68,9 @@ public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
     }
 
     @Override
-    public List<GatheringUserResponse> findAllGatheringsByUser(User user) {
+    public List<GatheringNameResponse> findAllGatheringsByUser(User user) {
         return jpaQueryFactory.select(Projections.constructor(
-                GatheringUserResponse.class,
+                GatheringNameResponse.class,
                 gathering.id,
                 gathering.gatheringInfo.name
                 ))
