@@ -7,6 +7,7 @@ public record GatheringResponse(
         String name,
         String description,
         LocalDateTime createdAt,
+        LocalDateTime lastActivityTime,
         String imageUrl,
         int numberOfMembers
 ) {

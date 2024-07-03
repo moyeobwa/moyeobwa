@@ -56,6 +56,8 @@ public class VoteCommandService {
                             .content(name)
                             .vote(vote)
                             .build()));
+        gathering.activate();
+
         return vote.getId();
     }
 

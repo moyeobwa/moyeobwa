@@ -1,5 +1,6 @@
 package momo.app.gathering.domain;
 
+import java.util.Optional;
 import momo.app.gathering.infrastructure.GatheringRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,4 +11,6 @@ public interface GatheringRepository extends JpaRepository<Gathering, Long>, Gat
     @Modifying(clearAutomatically = true)
     @Query("update Gathering g set g.isDeleted = true where g.id = :id")
     void deleteById(Long id);
+
+    Optional<Gathering> findByChatRoomId(Long chatRoomId);
 }
