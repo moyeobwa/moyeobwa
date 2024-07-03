@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum GatheringSortType {
-    LATEST("LATEST", "최신순"),
+    LATEST("LATEST", "최신활동순"),
     MEMBER_COUNT("MEMBER_COUNT", "모임원순");
 
     private String key;

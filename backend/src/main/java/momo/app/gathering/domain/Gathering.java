@@ -4,6 +4,7 @@ import static momo.app.gathering.exception.GatheringErrorCode.NOT_MANAGER;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -40,6 +41,8 @@ public class Gathering extends BaseTime {
     @Column(nullable = false, unique = true)
     private Long chatRoomId;
 
+    private LocalDateTime lastActivityTime;
+
     @OneToMany(mappedBy = "gathering")
     private List<GatheringTag> gatheringTags = new ArrayList<>();
 
@@ -58,6 +61,7 @@ public class Gathering extends BaseTime {
         this.gatheringInfo = gatheringInfo;
         this.managerId = managerId;
         this.chatRoomId = chatRoomId;
+        this.lastActivityTime = LocalDateTime.now();
     }
 
     public void addGatheringTag(GatheringTag gatheringTag) {
@@ -77,5 +81,10 @@ public class Gathering extends BaseTime {
     public void updateGatheringInfo(GatheringInfo gatheringInfo) {
         this.gatheringInfo = gatheringInfo;
     }
+
+    public void activate() {
+        lastActivityTime = LocalDateTime.now();
+    }
+
 
 }

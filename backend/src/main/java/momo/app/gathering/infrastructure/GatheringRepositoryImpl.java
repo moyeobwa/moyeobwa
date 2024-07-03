@@ -9,6 +9,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import momo.app.common.dto.SliceResponse;
@@ -52,6 +54,7 @@ public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
                         gathering.gatheringInfo.name,
                         gathering.gatheringInfo.description,
                         gathering.createdDate,
+                        gathering.lastActivityTime,
                         gathering.gatheringInfo.imageUrl,
                         gatheringMember.countDistinct().intValue()
                 ))
@@ -95,7 +98,7 @@ public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
         }
 
         if (sortType == LATEST) {
-            return gathering.id.lt(Long.valueOf(cursor));
+            return gathering.lastActivityTime.before(LocalDateTime.parse(cursor, DateTimeFormatter.ISO_DATE_TIME));
         }
 
         int memberCount = Integer.parseInt(cursor.substring(0, MAX_MEMBER_COUNT_DIGIT));
@@ -137,15 +140,14 @@ public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
         return switch (sortType) {
             case MEMBER_COUNT -> String.format("%06d", lastGathering.numberOfMembers())
                     + String.format("%08d", lastGathering.id());
-            default -> String.valueOf(lastGathering.id());
+            default -> String.valueOf(lastGathering.lastActivityTime());
         };
     }
 
     private OrderSpecifier createGatheringSpecifier(GatheringSortType sortType) {
         return switch (sortType) {
             case MEMBER_COUNT -> new OrderSpecifier<>(Order.DESC, gatheringMember.countDistinct());
-            case LATEST -> new OrderSpecifier<>(Order.DESC, gathering.updatedDate);
-            default -> new OrderSpecifier<>(Order.DESC, gathering.id);
+            default -> new OrderSpecifier<>(Order.DESC, gathering.lastActivityTime);
         };
     }
 }
