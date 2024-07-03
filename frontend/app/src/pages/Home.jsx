@@ -1,74 +1,70 @@
-import { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import Header from '../components/Header';
 import UserSidebar from '../components/UserSidebar';
 import Card from '../components/Card';
 import './Home.css';
 
-const gatheringData = [
-    {
-        id: 1,
-        title: "사진 모임",
-        describe: "사진 좋아하는 사람들 모이세요",
-        memberCnt: 15,
-        date: new Date(2024, 4, 23, 0, 0, 0).getTime()
-    },
-    {
-        id: 2,
-        title: "운동 모임",
-        describe: "운동 좋아하는 사람들 모이세요",
-        memberCnt: 20,
-        date: new Date(2024, 4, 15, 0, 0, 0).getTime()
-    },
-    {
-        id: 3,
-        title: "독서 모임",
-        describe: "독서 좋아하는 사람들 모이세요",
-        memberCnt: 10,
-        date: new Date(2024, 3, 12, 0, 0, 0).getTime()
-    },
-    {
-        id: 4,
-        title: "게임 모임",
-        describe: "게임 좋아하는 사람들 모이세요",
-        memberCnt: 5,
-        date: new Date(2024, 4, 19, 0, 0, 0).getTime()
-    },
-    {
-        id: 5,
-        title: "등산 모임",
-        describe: "등산 좋아하는 사람들 모이세요",
-        memberCnt: 8,
-        date: new Date(2024, 4, 25, 0, 0, 0).getTime()
-    },
-];
-
 const Home = () => {
-    const [sortType, setSortType] = useState("latest");
+    const [gatheringData, setGatheringData] = useState([]);
+    const [sortType, setSortType] = useState("LATEST");
+    const [cursor, setCursor] = useState(null);
+    const [hasNext, setHasNext] = useState(true);
+    const scrollContainerRef = useRef(null);
+    const tempCursor = useRef(0);
+
+    const token = localStorage.getItem('token');
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+    useEffect(() => {
+        fetchGatherings();
+    }, [sortType, cursor]);
+
+    const fetchGatherings = async () => {
+        try {
+            const response = await axios.get(`${apiUrl}/api/v1/gatherings`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    sortType,
+                    ...(cursor && { cursor }),
+                    pageSize: 3
+                }
+            });
+            
+            const newGatherings = response.data.values;
+            tempCursor.current  = response.data.cursor;
+            if (cursor) {
+                setGatheringData(prevData => {
+                    const existingIds = prevData.map(g => g.id);
+                    const filteredNewGatherings = newGatherings.filter(g => !existingIds.includes(g.id));
+                    return [...prevData, ...filteredNewGatherings];
+                });
+            } else {
+                setGatheringData(newGatherings);
+            }
+            setHasNext(response.data.hasNext);
+        } catch (error) {
+            console.error('모임 데이터를 가져오는데 실패했습니다:', error);
+        }
+    };
 
     const onChangeSortType = (e) => {
         setSortType(e.target.value);
+        setCursor(null);
     };
-
-    const scrollContainerRef = useRef(null);
 
     const handleWheelScroll = (event) => {
         const scrollAmount = event.deltaY;
         scrollContainerRef.current.scrollLeft += scrollAmount;
     };
 
-    const getSortedGatheringData = () => {
-        return gatheringData.sort((a, b) => {
-            if (sortType === "memberOrder") {
-                return Number(b.memberCnt) - Number(a.memberCnt);
-            } else if (sortType === "recency") {
-                return b.date - a.date;
-            } else {
-                return Number(a.id) - Number(b.id);
-            }
-        });
+    const loadMoreGatherings = () => {
+        if (hasNext) {
+            setCursor(tempCursor.current);
+        }
     };
-
-    const sortedGatheringData = getSortedGatheringData();
 
     return (
         <div>
@@ -87,8 +83,8 @@ const Home = () => {
                                 <input 
                                     type="radio" 
                                     name="radio" 
-                                    value="memberOrder" 
-                                    checked={sortType === "memberOrder"} 
+                                    value="MEMBER_COUNT" 
+                                    checked={sortType === "MEMBER_COUNT"} 
                                     onChange={onChangeSortType} 
                                 />
                                 <span className="name">모임원 순</span>
@@ -97,8 +93,8 @@ const Home = () => {
                                 <input 
                                     type="radio" 
                                     name="radio" 
-                                    value="recency" 
-                                    checked={sortType === "recency"} 
+                                    value="LATEST" 
+                                    checked={sortType === "LATEST"} 
                                     onChange={onChangeSortType} 
                                 />
                                 <span className="name">최근 활동 순</span>
@@ -110,11 +106,16 @@ const Home = () => {
                         onWheel={handleWheelScroll}
                         ref={scrollContainerRef}
                     >
-                        {sortedGatheringData.map((gathering) => (
+                        {Array.isArray(gatheringData) && gatheringData.map((gathering) => (
                             <a href={`/gathering/${gathering.id}`} key={gathering.id}>
                                 <Card {...gathering} />
                             </a>
                         ))}
+                        {hasNext && (
+                            <button onClick={loadMoreGatherings} className="load-more-button">
+                                더보기
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

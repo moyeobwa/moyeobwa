@@ -16,6 +16,8 @@ import momo.app.gathering.domain.Category;
 import momo.app.gathering.domain.GatheringMember;
 import momo.app.gathering.domain.GatheringSortType;
 import momo.app.gathering.dto.GatheringResponse;
+import momo.app.gathering.dto.GatheringNameResponse;
+import momo.app.user.domain.User;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -63,6 +65,20 @@ public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
                 .fetch();
 
         return convertToSlice(result, sortType, pageSize);
+    }
+
+    @Override
+    public List<GatheringNameResponse> findAllGatheringsByUser(User user) {
+        return jpaQueryFactory.select(Projections.constructor(
+                GatheringNameResponse.class,
+                gathering.id,
+                gathering.gatheringInfo.name
+                ))
+                .from(gathering)
+                .leftJoin(gatheringMember).on(gatheringMember.user.id.eq(user.getId()))
+                .where(gathering.id.eq(gatheringMember.gathering.id))
+                .orderBy(gathering.id.desc())
+                .fetch();
     }
 
     private BooleanExpression categoryEq(Category category) {
@@ -128,6 +144,7 @@ public class GatheringRepositoryImpl implements GatheringRepositoryCustom {
     private OrderSpecifier createGatheringSpecifier(GatheringSortType sortType) {
         return switch (sortType) {
             case MEMBER_COUNT -> new OrderSpecifier<>(Order.DESC, gatheringMember.countDistinct());
+            case LATEST -> new OrderSpecifier<>(Order.DESC, gathering.updatedDate);
             default -> new OrderSpecifier<>(Order.DESC, gathering.id);
         };
     }

@@ -1,3 +1,8 @@
+.names{
+  display: flex;
+  gap:8px;
+}
+
 .profile {
   display: flex;
   align-items: center;
@@ -15,9 +20,14 @@
   color: #000;
 }
 
-.profile .info .nickname {
+.profile .info .name {
   font-weight: bold;
+  font-size: 20px;
   margin-bottom: 5px;
+}
+
+.profile .info .nickname {
+  margin-top: 5px;
 }
 
 .profile .info .email {

@@ -1,19 +1,33 @@
 import './MyGatheringList.css';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-
-const myGathering = [
-  {
-    id:11,
-    title:"소울 휘트니스 헬스 모임"
-  },
-  {
-    id:12,
-    title:"스파르타 코딩 모임"
-  }
-]
+import axios from 'axios';
 
 const MyGatheringList = () => {
   const nav = useNavigate();
+  const [gatheringList, setGatheringList] = useState([]);
+  const token = localStorage.getItem('token');
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+  useEffect(() => {
+    const fetchGatheringList = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/v1/gatherings/user`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          setGatheringList(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('네트워크 오류가 발생했습니다.');
+      }
+    };
+
+    fetchGatheringList();
+  }, [token]);
 
   const goGatheringPage = (id) => {
       nav(`/gathering/${id}`)
@@ -23,9 +37,9 @@ const MyGatheringList = () => {
     <div className="gathering_list">
       <h3>내 모임</h3>
       <ul>
-        {myGathering.map((gathering) => (
+        {gatheringList.map((gathering) => (
             <li key={gathering.id} onClick={() => goGatheringPage(gathering.id)}>
-              {gathering.title}
+              {gathering.name}
             </li>
         ))}
       </ul>
