@@ -37,7 +37,7 @@ public class ScheduleService {
     ) {
         User user = findUser(authUser);
         Gathering gathering = findGathering(request.gatheringId());
-
+        gathering.activate();
         validateUserInGathering(request.gatheringId(), user);
 
         Schedule schedule = Schedule.builder()
@@ -61,7 +61,7 @@ public class ScheduleService {
             AuthUser authUser
     ) {
         User user = findUser(authUser);
-        Schedule schedule = findSchedule(id);
+        Schedule schedule = findScheduleWithGathering(id);
 
         schedule.validateUser(user);
 
@@ -81,8 +81,8 @@ public class ScheduleService {
     public void delete(Long id, AuthUser authUser) {
         User user = findUser(authUser);
         Schedule schedule = findSchedule(id);
-
         schedule.validateUser(user);
+        schedule.getGathering().activate();
 
         scheduleRepository.delete(schedule);
     }
@@ -99,6 +99,11 @@ public class ScheduleService {
 
     private Schedule findSchedule(Long id) {
         return scheduleRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(SCHEDULE_NOT_FOUND));
+    }
+
+    private Schedule findScheduleWithGathering(Long id) {
+        return scheduleRepository.findByIdWithGathering(id)
                 .orElseThrow(() -> new BusinessException(SCHEDULE_NOT_FOUND));
     }
 
