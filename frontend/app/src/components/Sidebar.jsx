@@ -1,12 +1,71 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import './Sidebar.css';
-import profile from "./../assets/profile.png"
-import Button from "./Button"
+import axios from 'axios';
+import profile from "./../assets/profile.png";
+import Button from "./Button";
 import { RiMessage2Line } from "react-icons/ri";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { LuVote } from "react-icons/lu";
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
+const Sidebar = ({ gatheringId, activeTab, setActiveTab }) => {
+  const token = localStorage.getItem('token');
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [friends, setFriends] = useState([]);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/v1/friends/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.status === 200) {
+          setFriends(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('네트워크 오류가 발생했습니다.');
+      }
+    };
+
+    fetchFriends();
+  }, [token]);
+
+  const inviteFriend = async (friendId) => {
+    try {
+      const response = await axios.post(`${apiUrl}/api/v1/friends/invite`, {
+        gatheringId,
+        friendId
+      },{
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        params: {
+            gatheringId,
+            friendId
+        }
+      });
+      if (response.status === 201) {
+        alert('친구 초대되었습니다.');
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        alert('사용자와 친구 정보가 일치하지 않습니다.');
+      } else if (error.response.status === 409) { 
+        alert('이미 초대한 친구입니다.');
+      } else {
+        console.error(error);
+        alert('네트워크 오류가 발생했습니다.');
+      }
+    }
+  }
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">
@@ -45,7 +104,27 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           <div className="participant-item">문진수</div>
           <div className="participant-item">윤대현</div>
         </div>
-        <Button text={"친구초대"}/>
+        <div className="invite-button-container">
+          <Button text={"친구초대"} onClick={openModal}/>
+          {isModalOpen && (
+            <div className="invite-modal">
+              <h3>친구 초대하기</h3>
+              <div className="friend-list">
+                <ul>
+                  {friends.map(friend => (
+                    <li key={friend.id}>
+                      <span className="friend-name">{friend.nickName}</span>
+                      <button onClick={() => inviteFriend(friend.userId)} className="invite-button">초대</button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="close-button">
+                <Button text={'닫기'} onClick={closeModal} />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
