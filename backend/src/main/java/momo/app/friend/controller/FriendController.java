@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -80,5 +81,28 @@ public class FriendController {
         List<FriendResponse> friendResponses = friendService.getFriendRequests(authUser);
 
         return ResponseEntity.ok(friendResponses);
+    }
+
+    @PostMapping("/invite")
+    ResponseEntity<Void> inviteFriend(
+            @RequestParam Long gatheringId,
+            @RequestParam Long friendId,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        Long id = friendService.inviteFriend(gatheringId, friendId, authUser);
+
+        return ResponseEntity.created(URI.create("/api/v1/friends/invite/" + id))
+                .build();
+    }
+
+    @PostMapping("/invite/{gatheringId}")
+    ResponseEntity<Void> acceptInvite(
+            @PathVariable Long gatheringId,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        friendService.acceptInvite(gatheringId, authUser);
+
+        return ResponseEntity.ok()
+                .build();
     }
 }
