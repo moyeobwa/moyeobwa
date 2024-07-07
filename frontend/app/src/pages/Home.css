@@ -129,3 +129,44 @@
     border-radius: 5px;
     cursor: pointer;
 }
+
+.invite-list {
+    cursor: pointer;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    z-index: 1000;
+    font-weight: bold;
+    
+}
+
+.invite-list:hover {
+    color: rgb(246, 113, 120);
+}
+
+.invite-list-modal {
+    position: absolute;
+    width: 150px;
+    height: 300px;
+    bottom: 90px;
+    left: 85%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+  
+  .invite-list-modal h3 {
+    font-size: 18px;
+    text-align: center;
+    margin-top:0px;
+  }
+  
+  .close-button {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+  }

@@ -3,6 +3,8 @@ import axios from 'axios';
 import Header from '../components/Header';
 import UserSidebar from '../components/UserSidebar';
 import Card from '../components/Card';
+import Button from "../components/Button";
+import { AiOutlineUp, AiOutlineDown } from 'react-icons/ai';  // 아이콘 임포트
 import './Home.css';
 
 const Home = () => {
@@ -10,6 +12,8 @@ const Home = () => {
     const [sortType, setSortType] = useState("LATEST");
     const [cursor, setCursor] = useState(null);
     const [hasNext, setHasNext] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [invite, setInvite] = useState([]);
     const scrollContainerRef = useRef(null);
     const tempCursor = useRef(0);
 
@@ -66,6 +70,8 @@ const Home = () => {
         }
     };
 
+    const toggleModal = () => setIsModalOpen(prevState => !prevState);
+
     return (
         <div>
             <div className="home_">
@@ -115,6 +121,20 @@ const Home = () => {
                             <button onClick={loadMoreGatherings} className="load-more-button">
                                 더보기
                             </button>
+                        )}
+                    </div>
+                    <div className="invite-list-button-container">
+                        <div
+                            className="invite-list"
+                            onClick={toggleModal}
+                        >
+                            모임 초대 목록 {isModalOpen ? <AiOutlineUp /> : <AiOutlineDown />}
+                        </div> 
+                        {isModalOpen && (
+                            <div className="invite-list-modal">
+                                <h3>모임 초대</h3>
+                                
+                            </div>
                         )}
                     </div>
                 </div>
