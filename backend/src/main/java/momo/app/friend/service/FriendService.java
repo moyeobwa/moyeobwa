@@ -8,9 +8,9 @@ import momo.app.friend.domain.FriendRepository;
 import momo.app.friend.domain.FriendState;
 import momo.app.friend.dto.FriendResponse;
 import momo.app.friend.exception.FriendErrorCode;
+import momo.app.gathering.domain.*;
 import momo.app.user.domain.User;
 import momo.app.user.domain.UserRepository;
-import momo.app.user.exception.UserErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +18,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static momo.app.friend.exception.FriendErrorCode.*;
+import static momo.app.gathering.exception.GatheringErrorCode.*;
+import static momo.app.user.exception.UserErrorCode.USER_NOT_FOUND;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final GatheringRepository gatheringRepository;
+    private final GatheringInviteRepository gatheringInviteRepository;
+    private final GatheringMemberRepository gatheringMemberRepository;
 
     public void request(Long id, AuthUser authUser) {
         User fromUser = findUser(authUser.getId());
@@ -79,7 +86,7 @@ public class FriendService {
         fromFriend.validateUserInFriend(user);
 
         Friend toFriend = friendRepository.findByFromUser(fromFriend.getToUser())
-                .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(FRIEND_NOT_FOUND));
 
         friendRepository.deleteAllByIds(List.of(fromFriend.getId(), toFriend.getId()));
     }
@@ -117,27 +124,92 @@ public class FriendService {
                 .collect(Collectors.toList());
     }
 
+    public Long inviteFriend(
+            Long gatheringId,
+            Long friendId,
+            AuthUser authUser
+    ) {
+        User fromUser = findUser(authUser.getId());
+        User toUser = findUser(friendId);
+        Gathering gathering = findGathering(gatheringId);
+
+        validateFriend(fromUser, toUser);
+        validateGatheringInvite(fromUser, toUser);
+
+        GatheringInvite gatheringInvite = GatheringInvite.builder()
+                .fromUser(fromUser)
+                .toUser(toUser)
+                .gathering(gathering)
+                .build();
+
+        gatheringInviteRepository.save(gatheringInvite);
+
+        return gatheringInvite.getId();
+    }
+
+    public void acceptInvite(Long gatheringInviteId, AuthUser authUser) {
+        User user = findUser(authUser.getId());
+        GatheringInvite gatheringInvite = findGatheringInvite(gatheringInviteId);
+
+        gatheringInvite.validateToUser(authUser);
+
+        GatheringMember gatheringMember = GatheringMember.builder()
+                .user(user)
+                .gathering(gatheringInvite.getGathering())
+                .build();
+
+        gatheringMemberRepository.save(gatheringMember);
+        gatheringInviteRepository.deleteById(gatheringInviteId);
+    }
+
     private User findUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(USER_NOT_FOUND));
     }
 
     private Friend findFriend(Long id) {
         return friendRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(FriendErrorCode.FRIEND_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(FRIEND_NOT_FOUND));
+    }
+
+    private Gathering findGathering(Long id) {
+        return gatheringRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(GATHERING_NOT_FOUND));
+    }
+
+    private GatheringInvite findGatheringInvite(Long id) {
+        return gatheringInviteRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(GATHERING_INVITE_NOT_FOUND));
+    }
+
+    private void validateGatheringInvite(User fromUser, User toUser) {
+        List<GatheringInvite> gatheringInvites = gatheringInviteRepository.findByTwoUser(fromUser, toUser);
+
+        if (gatheringInvites.size() >= 0) {
+            throw new BusinessException(GATHERING_INVITE_ALREADY_EXISTS);
+        }
     }
 
     private void validateFriendRequest(User fromUser, User toUser) {
         if (fromUser.getId() == toUser.getId()) {
-            throw new BusinessException(FriendErrorCode.FRIEND_REQUEST_SELF);
+            throw new BusinessException(FRIEND_REQUEST_SELF);
         }
 
         List<Friend> friends = friendRepository.findByTwoUser(fromUser, toUser);
 
         if (friends.size() == 1) {
-            throw new BusinessException(FriendErrorCode.FRIEND_REQUEST_ALREADY_EXISTS);
+            throw new BusinessException(FRIEND_REQUEST_ALREADY_EXISTS);
         } else if (friends.size() == 2) {
-            throw new BusinessException(FriendErrorCode.FRIEND_ALREADY_EXISTS);
+            throw new BusinessException(FRIEND_ALREADY_EXISTS);
+        }
+    }
+
+    private void validateFriend(User fromUser, User toUser) {
+
+        List<Friend> friends = friendRepository.findByTwoUser(fromUser, toUser);
+
+        if (friends.size() <= 0) {
+            throw new BusinessException(FRIEND_NOT_FOUND);
         }
     }
 }
