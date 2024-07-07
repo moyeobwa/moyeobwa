@@ -15,7 +15,7 @@ const Gathering = () => {
     <div className="gathering">
       <Header />
       <div className="main-content">
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Sidebar gatheringId={id} activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="content-section">
           {activeTab === 'Messages' && <Chat gatheringId={id} />}
           {activeTab === 'Calendar' && <Calendar gatheringId={id}/>}
